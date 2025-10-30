@@ -1,8 +1,12 @@
-AI产品经理
+# AI产品经理
 
-1.相关资料：
+## 1.相关资料：
 
-2.笔记：
+[10分钟讲清楚 Prompt, Agent, MCP 是什么_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1aeLqzUE6L/?spm_id_from=333.337.search-card.all.click&vd_source=8b69015a784e94f6a869001308d33fa5)
+
+## 2.笔记：
+
+### 2.1 大模型产品分析
 
 ![image-20251027144441092](./pic/image-20251027144441092.png)
 
@@ -105,4 +109,24 @@ prompt工程，调整输入
 3.报告生成：格式要求
 
 4.角色扮演：语气
+
+### 2.2 prompt，agent，mcp是什么
+
+AutoGPT systemprompt
+
+cline 面对出错使用重复的回答按照格式
+
+![image-20251030175315658](./pic/image-20251030175315658.png)
+
+![image-20251030175434061](./pic/image-20251030175434061.png)
+
+system promte和fuction calling
+
+![image-20251030175527567](./pic/image-20251030175527567.png)
+
+![image-20251030175640222](./pic/image-20251030175640222.png)
+
+![image-20251030175654316](./pic/image-20251030175654316.png)
+
+system prompt 和function calling
 
