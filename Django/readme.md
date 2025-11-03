@@ -4,6 +4,8 @@
 
 [04-快速使用django展示数据_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1nNr7YZESq?spm_id_from=333.788.player.switch&vd_source=8b69015a784e94f6a869001308d33fa5&p=4)
 
+【2025版-零基础玩转Python Django5项目实战-学完可就业】 https://www.bilibili.com/video/BV1N1421U76L/?p=5&share_source=copy_web&vd_source=b1560a316ec9a486cde3dbbfef0ffd0f
+
 ## 2.笔记
 
 原生开发：不利用现有框架，从0开始
