@@ -118,11 +118,15 @@ git push --force origin master
 
 git push origin main 非强制
 
-
+git branch -M main
 
 3.切换本地分支以匹配远程
 
 ASUS@mark-bunee MINGW64 /d/PROJIECT/lifelonglearning (master)
+
+$ git push origin main
+error: src refspec main does not match any
+error: failed to push some refs to 'https://github.com/qazwsx2323ppp/EEG_encoder'出现这种报错：
 
 $ git branch -M main
 

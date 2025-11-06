@@ -50,5 +50,9 @@ mcp(模型上下文接口 )
 
 langsmith
 
-### 2.2 Ragflow
+### 2.2 Rag
+
+![image-20251104141821363](./pic/image-20251104141821363.png)
+
+
 
