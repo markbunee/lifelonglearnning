@@ -1,5 +1,11 @@
 # MySQL
 
+1.资料
+
+[DataGrip操作MySQL完全指南：从入门到精通DataGrip操作MySQL完全指南：从入门到精通 1. Dat - 掘金](https://juejin.cn/post/7480826943065358370)
+
+2.笔记
+
 start the mysql
 
 net start mysql80
@@ -113,3 +119,28 @@ InnoDB默认存储引擎
 ![image-20250620094314770](./pic/image-20250620094314770.png)
 
 ![image-20250620094400145](./pic/image-20250620094400145.png)
+
+
+
+初始化：mysqld --initialize
+
+安装命令：mysqld install
+
+启动服务命令：net start mysql
+
+mysql -uroot -p
+
+alter user ‘root’@‘localhost’ identified by ‘root’;
+
+net stop mysql
+
+mysqld -remove
+
+
+
+
+
+
+
+
+
