@@ -74,17 +74,25 @@ echo 'vm.max_map_count=262144' | sudo tee -a /etc/sysctl.conf
 
 sudo sysctl -p
 
+在windows资源管理器地址栏输入\\\wsl$即可查看wls系统文件
 
+`\\wsl$\` 是Windows访问WSL存储的"入口"，**实际文件在Windows的AppData中**
 
+查看docker位置：docker info | grep "Docker Root Dir"
 
+Windows子系统，不是完整虚拟机
 
+**迁移WSL到D盘**
 
+wsl –shutdown
 
+复制整个Packages文件夹到D盘:
 
+Copy-Item -Path "C:\Users\markbunee\AppData\Local\Packages\*" -Destination "D:\WSL"
 
+创建符号链接（让Windows以为还在C盘）
 
-
-
+mklink /J "C:\Users\markbunee\AppData\Local\Packages" "D:\WSL\Packages"
 
 
 
