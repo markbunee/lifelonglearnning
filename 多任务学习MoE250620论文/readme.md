@@ -120,14 +120,6 @@ MoPE 充分利用了这两个领域的优点：MoE 的任务灵活度和 PEFT �
 
 (d) 显示一个逐层 MoPE 集成, 其中每个 Transformer 层看作是一个在专家之间带一个编排操作的门控统一个体。
 
-
-
-
-
-
-
-
-
 # 混合专家模型（MoE）：前沿改进方向全解析
 
 [混合专家模型（MoE）：前沿改进方向全解析_reinforcemoe模型-CSDN博客](https://blog.csdn.net/sinat_37574187/article/details/146222643)

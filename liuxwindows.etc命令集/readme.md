@@ -94,33 +94,81 @@ Copy-Item -Path "C:\Users\markbunee\AppData\Local\Packages\*" -Destination "D:\W
 
 mklink /J "C:\Users\markbunee\AppData\Local\Packages" "D:\WSL\Packages"
 
+### conda
 
+conda env list
 
+conda activate
 
+conda create -n mxx python=3.10
 
+conda doctor
 
+conda remove -n mxx –all
 
+conda clean --all
 
+conda config --show
 
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
 
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
 
+conda config --set show_channel_urls yes
 
+pip cache purge
 
+pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 
+pip config set global.trusted-host mirrors.aliyun.com
 
+pip install -i https://mirrors.aliyun.com/pypi/simple/ 包名 --trusted-host mirrors.aliyun.com
 
+对于指定库，三种github镜像：
 
+pip install git+https://gitclone.com/github.com/MahmoudAshraf97/demucs.git 
 
+pip install git+https://ghproxy.com/https://github.com/oliverguhr/deepmultilingualpunctuation.git
 
+pip install git+https://kgithub.com/MahmoudAshraf97/ctc-forced-aligner.git
 
+ubantu配置conda环境：
 
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 
+wget https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-latest-Linux-x86_64.sh
 
+chmod +x Miniconda3-latest-Linux-x86_64.sh
 
+./Miniconda3-latest-Linux-x86_64.sh
 
+source ~/.bashrc
 
+conda --version
 
+### 挂后台指令
 
+nohup uvicorn server:app --host 0.0.0.0 --port 8123 > server.log 2>&1 &
+
+screen/tmux方法：
+
+conda install screen
+
+screen -S diarization
+
+uvicorn server:app --host 0.0.0.0 --port 8123
+
+Ctrl + A, 然后按 D
+
+[detached from 12345.diarization]
+
+netstat -tulpn | grep 8123
+
+curl -X POST "http://localhost:8123/diarize" \  -F "url=http://192.168.30.165/file-resource/1919643053772152833/bz_opinion_analysis_file/analysis/20250811142333-18679590406-S20250811142333431037AC130E1711279928-0000107800184263_1763022114938.mp3" \  -F "language=zh" \  -F "whisper_model=medium" \  -F "device=cuda" \  -F "no_stem=true"
+
+screen -ls
+
+screen -r diarization
 
 
 
