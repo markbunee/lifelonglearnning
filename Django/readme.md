@@ -1,4 +1,4 @@
-# Django
+# Django+flask+fastapi
 
 ## 1.资料
 
@@ -161,3 +161,38 @@ path
 ![image-20251030150550650](./pic/image-20251030150550650.png)
 
 str在前面会覆盖调uuid
+
+# flask
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

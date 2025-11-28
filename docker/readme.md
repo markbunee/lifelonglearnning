@@ -1,4 +1,4 @@
-# DOCKER
+# DOCKER及项目部署与运维
 
 ## 1.资料
 
@@ -344,3 +344,735 @@ docker存储的三层级
 | **环境依赖性** | 只需Docker                    | 需要Docker+代码        | 完整开发环境         |
 | **灵活性**     | 固定功能                      | 中等定制               | 完全自由定制         |
 | **适用场景**   | 生产部署、快速体验            | 功能修改、界面定制     | 架构改动、新功能开发 |
+
+启动镜像：
+
+在有dockerfile的项目跟目录下执行：
+
+docker build -t diarization-api:latest .
+
+docker run --rm --gpus all -p 8123:8123 -v %cd%\results:/app/results diarization-api:latest
+
+## 水务：
+
+docker run -d --gpus all  -v /data/suanfa/suanfa0918:/home/bamb/brake/demo/images/upload  -p 6000:6000  --name algorithm  algorithm_image
+
+cd /data/suanfa/suanfa0918
+
+cd /home/bamb/brake/demo/images/upload/img/aiimg
+
+docker inspect 88a720b7d42a  | grep -A 10 -B 5 Mounts
+
+docker run -d --gpus all  -v /data/suanfa/suanfa0918:/home/bamb/brake/demo/images/upload  -p 6000:6000  --name algorithm_image  algorithm_imadge
+
+docker ps
+
+docker logs algorithm
+
+mkdir -p /data/suanfa/suanfa0918/img/aiimg
+
+docker stop 
+
+docker_container
+
+    {
+        "aiParam": {
+            "algCodes": [
+                "B"
+            ],
+            "file":"1.png",
+            "businessId": "1892824983833292800",
+           "geoCameraParam": {
+                "boundaryParam": [
+                    {
+                        "boundaryPoint": [
+                            {
+                                "lon": 111.49056470100004,
+                                "lat": 21.762450872000045
+                            },
+                            {
+                                "lon": 111.49063427800007,
+                                "lat": 21.76251000800005
+                            },
+                            {
+                                "lon": 111.49069295900006,
+                                "lat": 21.76253750500007
+                            },
+                            {
+                                "lon": 111.49075401000005,
+                                "lat": 21.76253732400005
+                            },
+                            {
+                                "lon": 111.49085216400005,
+                                "lat": 21.76255905000005
+                            },
+                            {
+                                "lon": 111.49092671400007,
+                                "lat": 21.762511118000077
+                            },
+                            {
+                                "lon": 111.49120446200004,
+                                "lat": 21.762388748000035
+                            },
+                            {
+                                "lon": 111.49074621500006,
+                                "lat": 21.761819178000053
+                            },
+                            {
+                                "lon": 111.49050878200006,
+                                "lat": 21.761935694000044
+                            },
+                            {
+                                "lon": 111.49047486600006,
+                                "lat": 21.761943833000032
+                            },
+                            {
+                                "lon": 111.49044147800004,
+                                "lat": 21.76196228300006
+                            },
+                            {
+                                "lon": 111.49038120600005,
+                                "lat": 21.762001358000077
+                            },
+                            {
+                                "lon": 111.49035059000005,
+                                "lat": 21.762053060000028
+                            },
+                            {
+                                "lon": 111.49035073700009,
+                                "lat": 21.762096427000074
+                            },
+                            {
+                                "lon": 111.49037522600008,
+                                "lat": 21.76217039900007
+                            },
+                            {
+                                "lon": 111.49038427000005,
+                                "lat": 21.762234438000064
+                            },
+                            {
+                                "lon": 111.49040466700006,
+                                "lat": 21.76229644700004
+                            },
+                            {
+                                "lon": 111.49047462700008,
+                                "lat": 21.76236016100006
+                            },
+                            {
+                                "lon": 111.49052000500006,
+                                "lat": 21.76239646700003
+                            },
+                            {
+                                "lon": 111.49056470100004,
+                                "lat": 21.762450872000045
+                            }
+                        ],
+                        "region": "f4d0d4551221f8ca5c1ce95bd85184c7-0"
+                    }
+                ],
+    
+                "minLon": 111.488432,
+                "maxLon": 111.493268,
+                "minLat": 21.760778,
+                "maxLat": 21.764372
+            }
+        },
+        "aiType": "1",
+        "bussParam": {
+            "reqId": "1",
+            "taskId": "1001",
+            "taskNo": "No1002"
+        },
+        "resType": 1,
+        "callbackUrl": "http://host.docker.internal:/{businessId}"
+    }
+
+curl -X POST "http://localhost:6000" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "aiParam": {
+        "algCodes": ["B"],
+        "file": "text.png",
+        "businessId": "1892824983833292800",
+        "geoCameraParam": {
+            "boundaryParam": [{
+                "boundaryPoint": [
+                    {"lon": 111.49056470100004, "lat": 21.762450872000045},
+                    {"lon": 111.49063427800007, "lat": 21.76251000800005},
+                    {"lon": 111.49069295900006, "lat": 21.76253750500007},
+                    {"lon": 111.49075401000005, "lat": 21.76253732400005},
+                    {"lon": 111.49085216400005, "lat": 21.76255905000005},
+                    {"lon": 111.49092671400007, "lat": 21.762511118000077},
+                    {"lon": 111.49120446200004, "lat": 21.762388748000035},
+                    {"lon": 111.49074621500006, "lat": 21.761819178000053},
+                    {"lon": 111.49050878200006, "lat": 21.761935694000044},
+                    {"lon": 111.49047486600006, "lat": 21.761943833000032},
+                    {"lon": 111.49044147800004, "lat": 21.76196228300006},
+                    {"lon": 111.49038120600005, "lat": 21.762001358000077},
+                    {"lon": 111.49035059000005, "lat": 21.762053060000028},
+                    {"lon": 111.49035073700009, "lat": 21.762096427000074},
+                    {"lon": 111.49037522600008, "lat": 21.76217039900007},
+                    {"lon": 111.49038427000005, "lat": 21.762234438000064},
+                    {"lon": 111.49040466700006, "lat": 21.76229644700004},
+                    {"lon": 111.49047462700008, "lat": 21.76236016100006},
+                    {"lon": 111.49052000500006, "lat": 21.76239646700003},
+                    {"lon": 111.49056470100004, "lat": 21.762450872000045}
+                ],
+                "region": "f4d0d4551221f8ca5c1ce95bd85184c7-0"
+            }],
+            "minLon": 111.488432,
+            "maxLon": 111.493268,
+            "minLat": 21.760778,
+            "maxLat": 21.764372
+        }
+    },
+    "aiType": "1",
+    "bussParam": {
+        "reqId": "1",
+        "taskId": "1001",
+        "taskNo": "No1002"
+    },
+    "resType": 1,
+    "callbackUrl": "http://host.docker.internal:8999/1892824983833292800"
+}
+
+/api/predict
+
+/analyze
+
+**`-H`**：curl命令中设置HTTP头部的参数
+
+**`Content-Type`**：HTTP头部字段，描述请求体的数据类型
+
+**`application/json`**：表示数据格式是JSON
+
+
+
+### 常见的AI服务API端点模式：
+
+#### 1. **直接动词型**（最常用）
+
+- `/predict`- 预测（机器学习模型最常用）
+- `/analyze`- 分析
+- `/detect`- 检测
+- `/classify`- 分类
+
+#### 2. **API版本化**
+
+- `/api/predict`
+- `/v1/predict`
+- `/v1/api/predict`
+
+#### 3. **模型服务型**
+
+- `/model/predict`
+- `/inference`
+- `/detection`
+
+docker logs algorithm_container
+
+```
+curl -X POST "http://localhost:18080/api/analysis" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "aiParam": {
+        "algCodes": ["B"],
+        "file": "/home/bamb/brake/demo/images/upload/img/aiimg/1764145638549_test.png",
+        "businessId": "1892824983833292800",
+        "geoCameraParam": {
+            "boundaryParam": [{
+                "boundaryPoint": [
+                    {"lon": 111.49056470100004, "lat": 21.762450872000045},
+                    {"lon": 111.49063427800007, "lat": 21.76251000800005},
+                    {"lon": 111.49069295900006, "lat": 21.76253750500007},
+                    {"lon": 111.49075401000005, "lat": 21.76253732400005},
+                    {"lon": 111.49085216400005, "lat": 21.76255905000005},
+                    {"lon": 111.49092671400007, "lat": 21.762511118000077},
+                    {"lon": 111.49120446200004, "lat": 21.762388748000035},
+                    {"lon": 111.49074621500006, "lat": 21.761819178000053},
+                    {"lon": 111.49050878200006, "lat": 21.761935694000044},
+                    {"lon": 111.49047486600006, "lat": 21.761943833000032},
+                    {"lon": 111.49044147800004, "lat": 21.76196228300006},
+                    {"lon": 111.49038120600005, "lat": 21.762001358000077},
+                    {"lon": 111.49035059000005, "lat": 21.762053060000028},
+                    {"lon": 111.49035073700009, "lat": 21.762096427000074},
+                    {"lon": 111.49037522600008, "lat": 21.76217039900007},
+                    {"lon": 111.49038427000005, "lat": 21.762234438000064},
+                    {"lon": 111.49040466700006, "lat": 21.76229644700004},
+                    {"lon": 111.49047462700008, "lat": 21.76236016100006},
+                    {"lon": 111.49052000500006, "lat": 21.76239646700003},
+                    {"lon": 111.49056470100004, "lat": 21.762450872000045}
+                ],
+                "region": "f4d0d4551221f8ca5c1ce95bd85184c7-0"
+            }],
+            "minLon": 111.488432,
+            "maxLon": 111.493268,
+            "minLat": 21.760778,
+            "maxLat": 21.764372
+        }
+    },
+    "aiType": "1",
+    "bussParam": {
+        "reqId": "1",
+        "taskId": "1001",
+        "taskNo": "No1002"
+    },
+    "resType": 1,
+    "callbackUrl": "http://host.docker.internal:8999/1892824983833292800"
+}'
+```
+
+docker logs Beyondrange
+
+docker stop algorithm 
+
+docker rm algorithm
+
+docker network create app-network
+
+docker run -d --gpus all   -v /data/suanfa/suanfa0918:/home/bamb/brake/demo/images/upload  --network detect-net   --name algorithm  algorithm_image
+
+
+
+docker run -d --gpus all   -v /data/suanfa/suanfa0918:/home/bamb  --network detect-net   --name algorithm  algorithm_image
+
+
+
+docker run -d  -p 18080:18080 --network detect-net --name Beyondrange  detect-server
+
+
+
+/home/bamb/brake/demo/images/upload/img/aiimg/1764145638549_test.png
+
+### 人声分离：
+
+在环境非默认账户情况下激活环境方法：
+
+source /data/lihongbiao/anaconda3/bin/activate diarization
+
+
+
+**本地直接运行**
+
+```bash
+uvicorn server:app --host 0.0.0.0 --port 8123
+# 或启用自动重载：
+python server.py --host 0.0.0.0 --port 8111 --reload
+```
+
+确保已在当前环境安装 `requirements.txt` 中的依赖，并准备好模型运行所需的 GPU/CPU。
+
+```bash
+pip install cython
+conda install ffmpeg
+pip install -r requirements.txt
+pip install git+https://github.com/MahmoudAshraf97/demucs.git
+pip install git+https://github.com/oliverguhr/deepmultilingualpunctuation.git
+pip install git+https://github.com/MahmoudAshraf97/ctc-forced-aligner.git
+pip install python-multipart
+pip install torchcodec
+```
+
+接口示例（与 `server.py` 定义一致）：
+
+```bash
+curl -X POST "http://localhost:8123/diarize" \
+  -F "url=http://192.168.30.165/file-resource/1919643053772152833/bz_opinion_analysis_file/analysis/20250811142333-18679590406-S20250811142333431037AC130E1711279928-0000107800184263_1763022114938.mp3" \
+  -F "language=zh" \
+  -F "whisper_model=small" \
+  -F "device=cuda" \
+  -F "device_index=1" \
+  -F "no_stem=true" \
+  
+
+```
+
+可选表单字段说明：
+
+- `whisper_model`：覆盖默认的 Whisper 模型。
+- `device`：强制使用 `cuda` 或 `cpu`。
+- `no_stem`：设为 `true` 跳过 Demucs 分离。
+- `diarize_extra`：用空格分隔的额外参数，会原样传递给 `app.py`（例如 `--vad-strict --batch-size 4`）。
+
+返回结果中会包含处理后的文件路径（本地或容器内的 `results/` 目录），可根据需要进一步读取或下载。***
+
+具体例子
+
+```bash
+curl -X POST "http://127.0.0.1:8000/diarize"   \
+-F "file=@/home/tommy/diarization-api/diarization/test/test-301.mp3"   \
+-F "language=zh"   \
+-F "diarize_extra=--whisper-model medium"
+```
+
+ conda install -c conda-forge ffmpeg 
+
+conda install -c conda-forge libsndfile 
+
+conda install pytorch==2.1.2 torchaudio==2.1.2 pytorch-cuda=11.8 -c pytorch -c nvidia
+
+pip install python-multipart
+
+pip install git+https://gitclone.com/github.com/oliverguhr/deepmultilingualpunctuation.git
+
+pip install git+https://gitclone.com/github.com/MahmoudAshraf97/demucs.git
+
+pip install git+https://gitclone.com/github.com/MahmoudAshraf97/ctc-forced-aligner.git
+
+screen -S yuyin
+
+ctrl + A +D临时退出
+
+提供权限
+
+sudo chmod -R 777 /tmp/mxx/new1126/diarization-apiorg
+
+export HF_ENDPOINT=https://hf-mirror.com
+
+export HF_ENDPOINT=https://mirrors.sustech.edu.cn/hugging-face export HF_ENDPOINT=https://hf-mirror.com
+
+```
+docker run --rm --gpus all   -e CUDNN_LIB_DIR=/opt/conda/lib/python3.11/site-packages/nvidia/cudnn/lib   -e LD_LIBRARY_PATH=/opt/conda/lib/python3.11/site-packages/nvidia/cudnn/lib   -v $(pwd)/results:/app/results   -p 8124:8000    -e HF_ENDPOINT=https://hf-mirror.com   diarization-api
+```
+
+```
+curl -X POST "http://localhost:8124/diarize"   -F "url=http://192.168.30.165/file-resource/1919643053772152833/bz_opinion_analysis_file/analysis/20250811142333-18679590406-S20250811142333431037AC130E1711279928-0000107800184263_1763022114938.mp3"   -F "language=zh"   -F "whisper_model=medium"   -F "device=cuda"   -F "no_stem=true" 
+```
+
+docker run --rm --gpus "device=1" \
+  -e CUDNN_LIB_DIR=/opt/conda/lib/python3.11/site-packages/nvidia/cudnn/lib \
+  -e LD_LIBRARY_PATH=/opt/conda/lib/python3.11/site-packages/nvidia/cudnn/lib \
+  -e HF_ENDPOINT=https://hf-mirror.com \
+  -v $(pwd)/results:/app/results \
+  -p 8124:8000 \
+  diarization-api
+
+
+
+
+
+## diarization-api
+
+Whisper + NeMo 的一站式语音分离/转写/角色分类服务。提供：
+
+- `app.py` 命令行：对单个音频跑完整管线，产出 `txt`/`srt`/`csv`。
+- `server.py` FastAPI：上传音频即返回结果，带定期清理输出。
+- Docker 镜像：封装 CUDA 12.4 运行环境，可 GPU/CPU 运行。
+
+### 项目结构
+
+```
+.
+├─app.py                # CLI 入口，调用 diarization/diarize.py 并做 SRT 解析、角色分类、CSV 导出
+├─server.py             # FastAPI 封装上传/调用/结果缓存与清理
+├─Dockerfile            # 基于 pytorch/pytorch:2.4.1-cuda12.4-cudnn9-runtime
+├─requirements.txt      # 推理依赖，配合 constraints.txt 固定版本
+├─trainer.py            # 示例文本角色分类训练脚本
+├─diarization/          # Whisper 转写 + MSDD 说话人分离 + CTC 对齐 + 标点恢复 主流程
+├─results/              # 默认输出目录（容器可挂载到宿主）
+├─text_role_classifier.pkl 等  # 已训练好的角色分类模型
+└─evaluation_manifest.json / metrics_test.py / test_predict_role.py # 测试与数据示例
+```
+
+### 核心流程
+
+- 可选音源分离：Demucs 保留人声（`--no-stem` 可关闭）。
+- Faster-Whisper 转写，按需指定 `--whisper-model`。
+- CTC forced aligner 做字/词级时间对齐，配合标点恢复。
+- NeMo MSDD 说话人分离，VAD 可通过 `--vad-*` 调整。
+- 生成带说话人分段的 `txt` / `srt`，并用文本分类模型产出角色 CSV。
+- FastAPI 封装上传、调用 CLI、汇总输出，并定时清理过期结果。
+
+### 技术栈
+
+- 深度学习/ASR：PyTorch 2.4.1、Faster-Whisper、CTranslate2、NVIDIA NeMo (MSDD)。
+- 音频处理：ffmpeg/sox、librosa、pydub、Demucs。
+- 对齐与文本：ctc-forced-aligner、deepmultilingualpunctuation、transformers、scikit-learn。
+- 服务层：FastAPI + Uvicorn，容器化用官方 PyTorch CUDA Runtime 基础镜像。
+
+### Docker 运行
+
+```bash
+# 构建镜像
+docker build -t diarization-api .
+
+# GPU 模式（推荐）：记得传入 cuDNN 路径并挂载 results
+docker run --rm --gpus all \
+  -e CUDNN_LIB_DIR=/opt/conda/lib/python3.11/site-packages/nvidia/cudnn/lib \
+  -e LD_LIBRARY_PATH=/opt/conda/lib/python3.11/site-packages/nvidia/cudnn/lib \
+  -v $(pwd)/results:/app/results \
+  -p 8124:8000 \
+   -e HF_ENDPOINT=https://hf-mirror.com \
+  diarization-api
+
+# 上例将宿主机 9000 端口映射到容器 8000。变量一定要加上，不然无法识别cudnn。
+
+# CPU 模式：清空 CUDA_VISIBLE_DEVICES
+docker run --rm -p 8000:8000 -e CUDA_VISIBLE_DEVICES= -v $(pwd)/results:/app/results diarization-api
+
+镜像默认启动 FastAPI，接口同下文示例。若要直接调用 CLI，可覆盖入口：
+
+```bash
+docker run --rm --gpus all -v $(pwd):/app diarization-api \
+  python app.py --audio /app/your_audio.wav --language zh --whisper-model medium
+```
+
+---
+
+**本地直接运行**
+
+确保已在当前环境安装 `requirements.txt` 中的依赖，并准备好模型运行所需的 GPU/CPU。
+
+```bash
+pip install cython
+sudo apt update && sudo apt install ffmpeg
+pip install -c constraints.txt -r requirements.txt
+```
+
+运行
+
+```bash
+uvicorn server:app --host 0.0.0.0 --port 8000
+# 或启用自动重载：
+python server.py --host 0.0.0.0 --port 8000 --reload
+```
+
+
+接口示例（与 `server.py` 定义一致）：
+
+```bash
+curl -X POST "http://localhost:8000/diarize" \
+  -F "file=@/path/to/audio.wav" \
+  -F "language=zh" \
+  -F "whisper_model=medium" \
+  -F "device=cuda" \
+  -F "no_stem=true" \
+  -F "diarize_extra=--vad-strict"
+```
+
+可选表单字段说明：
+
+- `whisper_model`：覆盖默认的 Whisper 模型。
+- `device`：强制使用 `cuda` 或 `cpu`。
+- `no_stem`：设为 `true` 跳过 Demucs 分离。
+- `diarize_extra`：用空格分隔的额外参数，会原样传递给 `app.py`（例如 `--vad-strict --batch-size 4`）。
+
+返回结果中会包含处理后的文件路径（本地或容器内的 `results/` 目录），可根据需要进一步读取或下载。***
+
+具体例子
+
+```bash
+curl -X POST "http://127.0.0.1:9000/diarize"   \
+-F "file=@/home/tommy/diarization-api/diarization/test/test-301.mp3"   \
+-F "language=zh"   \
+  -F "diarize_extra=--whisper-model medium" \
+  -F "device=cuda"
+```
+
+输出说明
+
+- 服务接口返回：源文件名、语言、各类产物路径（`results/` 目录下）以及 CSV 解析后的片段内容。
+- 本地/容器内会生成：`*.txt`（逐句转写）、`*.srt`（含说话人分段）、`*_with_roles.csv`（角色与置信度）。
+- FastAPI 会每小时清理一次超过 72 小时的 `results/`/`temp_outputs_*` 文件。
+
+## ragflow 部署
+
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+
+bash Miniconda3-latest-Linux-x86_64.sh
+
+| 部署方式             | 作用范围 | 复杂度 | 适用场景   | 输出结果         |
+| :------------------- | :------- | :----- | :--------- | :--------------- |
+| 源码编译 Docker 镜像 | 构建阶段 | ⭐⭐⭐⭐   | 定制化需求 | 生成 Docker 镜像 |
+| 以源代码启动服务     | 开发阶段 | ⭐⭐⭐⭐⭐  | 开发调试   | 运行开发环境     |
+| docker compose up    | 部署阶段 | ⭐⭐     | 生产/测试  | 运行完整服务     |
+
+源码编译 Docker 镜像
+
+docker build --platform linux/amd64 -f Dockerfile -t infiniflow/ragflow:nightly .
+
+根据 `Dockerfile`构建一个新的 Docker 镜像   
+
+将源代码、依赖包打包到镜像中   修改了源代码，需要重新打包
+
+生成可重复部署的标准化镜像
+
+以源代码启动服务
+
+不依赖 Docker，直接在宿主机运行
+
+使用本地安装的 Python、Node.js 环境
+
+基础设施（数据库等）仍用 Docker 运行
+
+docker compose up -d
+
+一键部署完整服务
+
+使用**预构建的官方镜像**启动所有服务
+
+包含前端、后端、数据库等完整组件
+
+生产环境就绪的部署方式
+
+| 方面           | 源码编译镜像   | 源码启动服务 | Docker Compose     |
+| :------------- | :------------- | :----------- | :----------------- |
+| **启动速度**   | 慢（需要构建） | 中等         | **快**（直接运行） |
+| **调试便利**   | 困难           | **最容易**   | 困难               |
+| **环境一致性** | **最好**       | 依赖本地环境 | **很好**           |
+| **资源占用**   | 构建时高       | 运行时中等   | 运行时中等         |
+| **适用阶段**   | 构建/发布      | 开发/调试    | 测试/生产          |
+
+**是的，所有三种部署方式最终都消耗本地资源**，只是资源分配和架构不同：
+
+| 部署方式               | 资源消耗位置 | 架构特点                      | 资源效率               |
+| :--------------------- | :----------- | :---------------------------- | :--------------------- |
+| **Docker直接拉镜像**   | 100%本地资源 | 所有服务在Docker容器内        | 容器有开销，但管理简单 |
+| **源码编译Docker镜像** | 100%本地资源 | 自定义镜像+容器运行           | 构建时额外消耗         |
+| **Conda+部分Docker**   | 100%本地资源 | 应用在Conda，基础设施在Docker | 资源利用更灵活         |
+
+跳过 jemalloc，Windows 不需要
+
+运行命令删除整个 `.venv`文件夹：
+
+Remove-Item -Recurse -Force .venv
+
+*# 检查当前项目目录结构*
+
+ls -Force
+
+uv pip list | grep huggingface*# 检查 pyproject.toml 中的依赖是否都安装了*
+
+ls -la download_deps.py
+
+uv run python -c "import huggingface_hub; print('huggingface_hub 导入成功')"
+
+uv run python -c "import huggingface_hub; print(huggingface_hub.__file__)"
+
+*# 查看是否有 .venv 文件夹* 
+
+ls .venv -Force
+
+*# 查看 uv 使用的 Python 解释器路径* 
+
+uv run python -c "import sys; print(sys.prefix)"
+
+```
+Python 项目管理生态
+├── 环境管理
+│   ├── Conda (重量级) ← 推荐用于复杂项目
+│   └── venv (轻量级)
+│
+├── 包安装工具  
+│   ├── uv (新一代，极速) ← 未来趋势
+│   ├── pip (官方标准)
+│   └── conda (conda生态专用)
+│
+└── 应用分发
+    └── pipx (全局工具安装)
+    
+```
+
+```
+# 功能：安装Python包
+pip install requests
+
+# 特点：
+# - Python官方标准工具
+# - 只能管理Python包
+# - 不处理环境隔离（需要配合venv）
+# - 速度相对较慢
+
+# 功能：安装可执行的Python应用
+pipx install jupyter
+pipx install black
+
+# 特点：
+# - 专门用于安装命令行工具
+# - 自动创建隔离环境
+# - 避免污染系统Python
+# - 只能用于安装"应用"，不能用于开发
+
+# 功能：快速安装和管理依赖
+uv pip install requests
+uv add requests  # 类似npm/yarn
+
+# 特点：
+# - 用Rust编写，速度极快
+# - 整合了pip + venv的功能
+# - 支持依赖解析缓存
+# - 新兴工具，生态在完善中
+
+# 功能：管理完整环境（包括系统库）
+conda create -n myenv python=3.10
+conda install numpy
+
+# 特点：
+# - 管理Python包 + 系统依赖（如C库）
+# - 强大的环境隔离
+# - 特别适合科学计算
+# - 包数量比PyPI少但质量高
+```
+
+| 工具  | 主要用途     | 环境隔离   | 速度 | 适用场景           |
+| :---- | :----------- | :--------- | :--- | :----------------- |
+| pip   | 安装Python包 | ❌ 需要venv | 慢   | 基础Python开发     |
+| pipx  | 安装全局工具 | ✅ 自动隔离 | 中等 | 命令行工具         |
+| uv    | 快速依赖管理 | ✅ 内置     | 极快 | 现代Python项目     |
+| conda | 完整环境管理 | ✅ 强大隔离 | 中等 | 数据科学、复杂依赖 |
+
+使用windows 下载会出现
+
+**`datrie`包在 Windows 上编译失败**是主要原因。这是一个经典的 Windows Python 包编译问题。
+
+- `datrie`是一个包含 C 扩展的包，需要编译
+- Windows 上需要 Microsoft Visual C++ Build Tools
+- 错误信息中缺少关键的编译错误，但根本原因是缺少编译环境
+
+```
+sudo tee /etc/systemd/system/docker.service.d/proxy.conf <<EOF
+[Service]
+Environment="HTTP_PROXY=http://172.31.96.1:7890"
+Environment="HTTPS_PROXY=http://172.31.96.1:7890"
+Environment="NO_PROXY=localhost,127.0.0.1,.docker.io,.docker.com,.hub.docker.com"
+EOF
+```
+
+sudo systemctl daemon-reload 
+
+sudo systemctl restart docker
+
+docker pull hello-world
+
+sudo docker info | grep -A 10 "Registry Mirrors"
+
+| 容器名称           | CONTAINER ID | CPU 使用率 | 内存使用/限制         | 内存占比 | 网络 I/O        | 块 I/O  | PIDS |
+| :----------------- | :----------- | :--------- | :-------------------- | :------- | :-------------- | :------ | :--- |
+| **docker-mysql-1** | 09654319a040 | 0.56%      | 197.3 MiB / 7.608 GiB | 2.53%    | 3.17MB / 2.36MB | 0B / 0B | 55   |
+| **docker-es01-1**  | 83d7bfa69ce2 | 0.30%      | 3.285 GiB / 7.519 GiB | 43.69%   | 1.79MB / 23.7kB | 0B / 0B | 144  |
+| **docker-minio-1** | e921ac139594 | 0.00%      | 257.7 MiB / 7.608 GiB | 3.31%    | 19.6MB / 4.19MB | 0B / 0B | 21   |
+| **docker-redis-1** | d567f2644041 | 0.13%      | 7.668 MiB / 7.608 GiB | 0.10%    | 863kB / 660kB   | 0B / 0B | 5    |
+
+| 组件类别       | 组件名称             | 内存占用    | 占总内存比例 | CPU使用率 | 状态评估       |
+| :------------- | :------------------- | :---------- | :----------- | :-------- | :------------- |
+| **主程序**     | ragflow_server.py    | 1.21 GB     | 15.9%        | 6.9%      | 🟡 正常         |
+| **主程序**     | task_executor.py     | 1.23 GB     | 16.2%        | 未知      | 🟡 正常         |
+| **主程序小计** | **RAGFlow主程序**    | **2.44 GB** | **32.1%**    | **-**     | **🟡 正常**     |
+| **中间件**     | Elasticsearch (es01) | 3.285 GB    | 43.2%        | 0.30%     | 🔴 内存大户     |
+| **中间件**     | MySQL                | 197.3 MB    | 2.5%         | 0.56%     | 🟢 正常         |
+| **中间件**     | MinIO                | 257.7 MB    | 3.3%         | 0.00%     | 🟢 正常         |
+| **中间件**     | Redis                | 7.67 MB     | 0.1%         | 0.13%     | 🟢 正常         |
+| **中间件小计** | **所有中间件**       | **3.75 GB** | **49.3%**    | **-**     | **🔴 内存紧张** |
+| **系统总计**   | **全部组件**         | **6.19 GB** | **81.4%**    | **-**     | **🔴 严重不足** |
+
+
+
+cd /mnt/d/ASUS/ragflow-0.22.0/ragflow-0.22.0/docker
+
+docker compose -f docker-compose-base.yml down
+
+markbunee@mark-bunee:/mnt/d/ASUS/ragflow-0.22.0/ragflow-0.22.0/web$ npm run dev
+
+docker compose -f docker/docker-compose-base.yml up -d
+
+pkill -f "ragflow_server.py|task_executor.py"
