@@ -1076,3 +1076,77 @@ markbunee@mark-bunee:/mnt/d/ASUS/ragflow-0.22.0/ragflow-0.22.0/web$ npm run dev
 docker compose -f docker/docker-compose-base.yml up -d
 
 pkill -f "ragflow_server.py|task_executor.py"
+
+## HR_resources_market
+
+```
+uvicorn sever:app --host 0.0.0.0 --port 8000 --reload
+
+curl -X POST "http://localhost:8101/rank/biz" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "post_text": "门店招聘收银员与前厅服务员，需沟通能力与基础收银技能",
+  }'
+  
+  curl -X POST "http://localhost:8101/rank/users" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "有三年餐饮服务经验，收银熟练",
+  }'
+```
+
+从您提供的路径可以看出，huggingface_hub 已经安装在虚拟环境的 site-packages 中，但是当运行 `uv run download_deps.py`时，却提示找不到模块。
+
+可能的原因有：
+
+1. 虚拟环境可能没有正确激活或 uv run 没有使用正确的虚拟环境。
+2. 路径问题：可能当前工作目录不在项目根目录，或者 Python 路径设置有问题。
+3. 模块名称大小写问题：在 Linux 系统中，模块名是大小写敏感的。您安装的包是 `huggingface_hub`，但导入时使用的是 `huggingface_hub`，这应该是一致的，但注意文件名是 `__init__.py`，所以模块名应该是 `huggingface_hub`。
+
+huggingface_hub确实安装在虚拟环境中，但 Python 却找不到它。这通常是由于 Python 路径问题或模块损坏导致的。
+
+检查模块是否真的存在
+
+ls -la /mnt/d/ASUS/ragflow-0.22.0/ragflow-0.22.0/.venv/lib/python3.10/site-packages/huggingface_hub/
+
+cat /mnt/d/ASUS/ragflow-0.22.0/ragflow-0.22.0/.venv/lib/python3.10/site-packages/huggingface_hub/__init__.py
+
+测试直接导入
+
+```
+uv run python -c "
+import sys
+print('Python 路径:', sys.prefix)
+print('sys.path:')
+for p in sys.path:
+    print('  ', p)
+
+print('尝试导入...')
+try:
+    import huggingface_hub
+    print('✓ 直接导入成功')
+except ImportError as e:
+    print('✗ 直接导入失败:', e)
+"
+
+which python
+uv run which python
+uv run python -c "import sys; print(sys.version); print(sys.executable)"
+
+echo $PYTHONPATH
+```
+
+```
+markbunee@mark-bunee:/mnt/d/ASUS/ragflow-0.22.0/ragflow-0.22.0$ uv run python -c "import sys, os; print('当前目录:', os.getcwd()); print('在 sys.path 中:', os.getcwd() in sys.path)"
+Uninstalled 1 package in 75ms
+░░░░░░░░░░░░░░░░░░░░ [0/1] Installing wheels...                                   warning: Failed to hardlink files; falling back to full copy. This may lead to degraded performance.
+         If the cache and target directories are on different filesystems, hardlinking may not be supported.
+         If this is intentional, set `export UV_LINK_MODE=copy` or use `--link-mode=copy` to suppress this warning.
+Installed 1 package in 2.02s
+当前目录: /mnt/d/ASUS/ragflow-0.22.0/ragflow-0.22.0
+在 sys.path 中: False
+
+解决方案：
+PYTHONPATH=. uv run python download_deps.py
+```
+

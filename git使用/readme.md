@@ -98,6 +98,8 @@ git config --global user.name "markbunee"
 
 git remote add origin https://github.com/markbunee/lifelonglearnning.git
 
+ git remote add origin http://192.168.5.221:8081/shuzhuan_git/zhishiku/rapid_platform/kd_algo.git
+
 其他知识点：
 
 1.换行符warning
