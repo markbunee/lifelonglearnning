@@ -100,7 +100,11 @@ git remote add origin https://github.com/markbunee/lifelonglearnning.git
 
  git remote add origin http://192.168.5.221:8081/shuzhuan_git/zhishiku/rapid_platform/kd_algo.git
 
+ git remote add origin https://github.com/markbunee/VitaFlow.git
+
 其他知识点：
+
+
 
 1.换行符warning
 
@@ -130,7 +134,7 @@ $ git push origin main
 error: src refspec main does not match any
 error: failed to push some refs to 'https://github.com/qazwsx2323ppp/EEG_encoder'出现这种报错：
 
-$ git branch -M main
+git branch -M main
 
 git push --force origin main
 

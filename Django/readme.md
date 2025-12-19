@@ -20,6 +20,8 @@
 
 ![image-20251028160811117](./pic/image-20251028160811117.png)
 
+![image-20251218100155670](./pic/image-20251218100155670.png)
+
 ![image-20251028161643568](./pic/image-20251028161643568.png)
 
 ![image-20251028162647755](./pic/image-20251028162647755.png)
@@ -162,33 +164,27 @@ path
 
 str在前面会覆盖调uuid
 
-# flask
+# fastapi
 
+【黑马程序员PythonWeb开发：FastAPI从入门到实战视频教程，涵盖路由、依赖注入、Pydantic、异步编程、ORM、项目拆分、模型训练、部署、接口测试】 https://www.bilibili.com/video/BV1zV2QBtE39/?p=2&share_source=copy_web&vd_source=b1560a316ec9a486cde3dbbfef0ffd0f
 
+![image-20251210170840085](./pic/image-20251210170840085.png)
 
+![image-20251210170915341](./pic/image-20251210170915341.png)
 
+![image-20251210170925238](./pic/image-20251210170925238.png)
 
+![image-20251210170958465](./pic/image-20251210170958465.png)
 
+直接改成docs就有测试区域
 
+![image-20251210172130778](./pic/image-20251210172130778.png)
 
+![image-20251210172234278](./pic/image-20251210172234278.png)
 
+![image-20251210172249553](./pic/image-20251210172249553.png)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+![image-20251210173530384](./pic/image-20251210173530384.png)
 
 
 

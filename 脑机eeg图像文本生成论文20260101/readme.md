@@ -610,9 +610,21 @@ EEG → EEGEncoder → Q-former → EEG Query Tokens
 
 ```
 
+✔ **多任务对齐**确保 EEG latent 是“可解释有语义的”
+ ✔ **CLIP 对齐**确保 EEG latent ≈ 图像语义 latent
+ ✔ **Q-former**把 EEG 的多维语义结构拆成 K 个 query tokens
+ ✔ **Projector**把这些 tokens 精准放入 LLM embedding space
+ ✔ **LLM (Omni)**本身具有强大的语义推理能力
+ ✔ **Diffusion**基于 LLM 语义和 EEG latent 合作生成图像
 
-
-
+| **特性**          | **AWQ (Activation-aware Weight Quantization)**               | **GPTQ (Generative Pre-trained Transformer Quantization)**   |
+| ----------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| **量化库**        | `awq` (或相关实现)                                           | `gptqmodel`                                                  |
+| **量化原理**      | **激活感知**: 识别并保护高激活值权重，只对不重要权重进行量化。 | **二阶优化**: 使用近似的 Hessian 信息，一次性找到最优量化权重，以最小化量化误差。 |
+| **压缩率**        | 较高（通常 Int4 或 Int8），性能损失极小。                    | 极高（通常 Int4），性能损失通常也极小。                      |
+| **VRAM 节省**     | 高效，但通常所有层都常驻 GPU。                               | 极高效，模型核心量化后体积很小。 **支持动态 CPU/GPU 卸载**（Offloading）。 |
+| **Qwen 代码适配** | 需要自定义 `BaseAWQForCausalLM` 类，定义缩放层。             | 需要自定义 `BaseGPTQModel` 类，定义量化模块和 VRAM 优化 Hooks。 |
+| **目标场景**      | 需要高性能且 VRAM 略紧张的场景。                             | VRAM 极度紧张的场景，需要最大限度压缩和 Offloading。         |
 
 
 

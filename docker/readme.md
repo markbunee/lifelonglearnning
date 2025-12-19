@@ -875,6 +875,22 @@ curl -X POST "http://127.0.0.1:9000/diarize"   \
 - 本地/容器内会生成：`*.txt`（逐句转写）、`*.srt`（含说话人分段）、`*_with_roles.csv`（角色与置信度）。
 - FastAPI 会每小时清理一次超过 72 小时的 `results/`/`temp_outputs_*` 文件。
 
+docker cp 69a155217130:/root/.cache/huggingface /tmp/mxx/docker-cache/huggingface
+
+docker cp 69a155217130:/root/.cache/torch  /tmp/mxx/docker-cache/torch
+
+export HF_HOME=/mnt/host/d/ASUS/docker-modelcache/huggingface
+
+export HUGGINGFACE_HUB_CACHE=/mnt/host/d/ASUS/docker-modelcache/huggingface/hub
+
+export TRANSFORMERS_CACHE=/mnt/host/d/ASUS/docker-modelcache/huggingface/hub
+
+export TORCH_HOME=/mnt/host/d/ASUS/docker-cache/torch
+
+docker exec -it eaa342445c73 ping -c 3 8.8.8.8
+
+docker exec -it eaa342445c73 ping -c 3 mirrors.aliyun.com
+
 ## ragflow 部署
 
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
@@ -945,9 +961,26 @@ uv pip list | grep huggingface*# 检查 pyproject.toml 中的依赖是否都安�
 
 ls -la download_deps.py
 
+#### 解决huggingface_hub问题：
+
 uv run python -c "import huggingface_hub; print('huggingface_hub 导入成功')"
 
 uv run python -c "import huggingface_hub; print(huggingface_hub.__file__)"
+
+PYTHONPATH=. uv run python download_deps.py
+
+#### wsl走代理问题
+
+ip route | grep default
+
+export http_proxy=http://172.31.96.1:7890
+export https_proxy=http://172.31.96.1:7890
+
+root@mark-bunee:/mnt/d/ASUS/xiaozhi/ragflow-0.22.0# export http_proxy=http://172.31.96.1:7890
+root@mark-bunee:/mnt/d/ASUS/xiaozhi/ragflow-0.22.0# export https_proxy=http://172.31.96.1:7890
+root@mark-bunee:/mnt/d/ASUS/xiaozhi/ragflow-0.22.0# export HTTPS_PROXY=http://172.31.96.1:7890
+
+curl https://google.com
 
 *# 查看是否有 .venv 文件夹* 
 
@@ -1149,4 +1182,121 @@ Installed 1 package in 2.02s
 解决方案：
 PYTHONPATH=. uv run python download_deps.py
 ```
+
+## ragflow二次开发
+
+### 启动
+
+cd /mnt/d/ASUS/xiaozhi/ragflow-0.22.0
+
+export PYTHONPATH=$(pwd)
+
+export UV_INDEX=https://mirrors.aliyun.com/pypi/simple
+
+source .venv/bin/activate
+
+vim /etc/hosts
+
+```
+127.0.0.1       localhost
+127.0.1.1       mark-bunee.     mark-bunee
+127.0.0.1       es01 infinity mysql minio redis sandbox-executor-manager
+```
+
+bash docker/launch_backend_service.sh
+
+python external/api/app.py
+
+#### 测试
+
+```
+
+1）文档摘要功能
+curl -X POST "http://localhost:8009/v1/abstract_extract/summary/extract" \
+  -H "Authorization: Bearer ragflow-6i9ewRJz3x8y0Ggo-ZQMnED48KWBhXCYowLyY4Ah-KE" \
+  --data "doc_id=299d5881dcaa11f0a7b0177fe4f11677"
+  
+
+2）获取doc_id
+curl --request GET   --url "http://127.0.0.1:9380/api/v1/datasets?page=1&page_size=30"   -H "Authorization: Bearer ragflow-6i9ewRJz3x8y0Ggo-ZQMnED48KWBhXCYowLyY4Ah-KE"
+// 获取dataset_id后获取doc_id
+curl --request GET   --url "http://127.0.0.1:9380/api/v1/datasets/2393a034dcaa11f0a7b0177fe4f11677/documents?page=1&page_size=10"   -H "Authorization: Bearer ragflow-6i9ewRJz3x8y0Ggo-ZQMnED48KWBhXCYowLyY4Ah-KE"
+
+3)json测试
+python /mnt/d/ASUS/xiaozhi/ragflow-0.22.0/mxx_tools/pic/jsonread.py
+
+4）知识库-搜索
+curl -s -X POST "http://localhost:8009/v1/file_search/2393a034dcaa11f0a7b0177fe4f11677/retrieval" \
+  -H "Authorization: Bearer ragflow-6i9ewRJz3x8y0Ggo-ZQMnED48KWBhXCYowLyY4Ah-KE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "请帮我检索与 DeepSeek 相关的回答要点"
+  }'
+```
+
+#### 问题与知识
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

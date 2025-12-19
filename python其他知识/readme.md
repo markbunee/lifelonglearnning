@@ -1,10 +1,14 @@
 # Python 小知识
 
-## anaconda minconda conda知识
+## anaconda minconda conda uv 知识 
 
 【15分钟彻底搞懂！Anaconda Miniconda conda-forge miniforge Mamba】 https://www.bilibili.com/video/BV1Fm4ZzDEeY/?share_source=copy_web&vd_source=b1560a316ec9a486cde3dbbfef0ffd0f
 
+【从pip到uv：一口气梳理现代Python项目管理全流程！】 https://www.bilibili.com/video/BV13WGHz8EEz/?share_source=copy_web&vd_source=b1560a316ec9a486cde3dbbfef0ffd0f
+
 ![image-20250912102232135](./pic/image-20250912102232135.png)
+
+![image-20251210175854035](./pic/image-20251210175854035.png)
 
 ![image-20250912102337616](./pic/image-20250912102337616.png)
 
@@ -15,6 +19,8 @@ conda 最主要交互是python
 ai系列依赖是最麻烦的 依赖地狱彼此强依赖
 
 python -m venv .venv
+
+base是conda自己运行的环境被破坏可能影响conda
 
 主流是认定.venv
 
@@ -42,7 +48,15 @@ uv管理 poetry PDM
 
 whl文件
 
+pip freeze requirements.txt
+
 库文件夹下属有各种.py
+
+uv sync 直接根据pyproject.toml 然后可以使用 pip install -e.
+
+source .venv/bin/activate
+
+uv run main.py
 
 ![image-20250912105045989](./pic/image-20250912105045989.png)
 
@@ -50,7 +64,7 @@ whl文件
 
 中间这两个可以排列组合的形式替换
 
-build+hatchling
+## build+hatchling
 
 ![image-20250912105611552](./pic/image-20250912105611552.png)
 
@@ -82,5 +96,5 @@ tools resources promote->mcp server mcp只负责管理而不管模型
 
 ![image-20250912162155973](./pic/image-20250912162155973.png)
 
-进程&进程&协程
+## 进程&进程&协程
 
