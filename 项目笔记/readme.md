@@ -61,6 +61,7 @@ PYTHONPATH=. uv run python download_deps.py
 
 ## 源码启动
 
+```
 cd /mnt/d/ASUS/xiaozhi/ragflow-0.22.0
 
 export PYTHONPATH=$(pwd)
@@ -69,21 +70,27 @@ export UV_INDEX=https://mirrors.aliyun.com/pypi/simple
 
 source .venv/bin/activate
 
-vim /etc/hosts
+export DOC_ENGINE=infinity  # 将es换成infinity 
+
+bash docker/launch_backend_service.sh
+
+python external/api/app.py
+```
+
+
 
 ```
+vim /etc/hosts
 127.0.0.1       localhost
 127.0.1.1       mark-bunee.     mark-bunee
 127.0.0.1       es01 infinity mysql minio redis sandbox-executor-manager
 ```
 
-bash docker/launch_backend_service.sh
-
-将es换成infinity export DOC_ENGINE=infinity
-
  export DOC_ENGINE=infinity   app.py读取setting文件
 
-python external/api/app.py
+
+
+
 
 ## 测试
 
@@ -121,6 +128,49 @@ curl -s -X POST "http://192.168.30.214:8009/v1/file_search/retrieval" \
 # ["4e8e1200dfad11f0bf97bfbc04264fe9", "5245826cde4911f0ad7485f5c7e80b5c"]
 
 #  "doc_ids": ["<DOC_ID_1>", "<DOC_ID_2>"],
+
+---------------
+旧接口示例：
+curl -s -X POST "http://localhost:8009/v1/file_search/retrieval"   -H "Authorization: Bearer ragflow-<API_KEY>"   -H "Content-Type: application/json"   -d '{
+    "question": ""，   ##问题
+    "page": 1,            ##页数功能: 结果分页的页码（从 1 开始）作用: 控制返回第几页的 chunks（每页 page_size 条）
+    "dataset_ids": ["4e8e1200dfad11f0bf97bfbc04264fe9", "5245826cde4911f0ad7485f5c7e80b5c"], ##数据库传入
+    "page_size": 10,#- 功能: 单页返回的结果条数- 作用: 直接影响响应体 chunks 的数量与延迟
+
+    "top_k": 50, #初筛候选的最大条数（向量与文本融合前的候选上限）
+    "similarity_threshold": 0.2, #相似度过滤阈值，低于该值的结果会被过滤，不计入 total ，也不进入 chunks
+    "vector_similarity_weight": 0.3, #融合权重（向量相似度相对于关键词相似度的占比），越大越偏向语义匹配；越小越偏向关键词精确匹配
+    "highlight": true #是否在返回中包含高亮文本片段，
+
+    
+  }'
+
+-------
+12月24日 搜索请求：
+curl -s -X POST "http://localhost:8009/v1/file_search/retrieval" \
+  -H "Authorization: Bearer ragflow-6i9ewRJz3x8y0Ggo-ZQMnED48KWBhXCYowLyY4Ah-KE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "请帮我检索与 DeepSeek 相关的回答要点",
+    "dataset_ids": ["4e8e1200dfad11f0bf97bfbc04264fe9", "5245826cde4911f0ad7485f5c7e80b5c"],
+    "page": 1,
+    "page_size": 5,
+    "top_k": 10,
+    "similarity_threshold": 0.2,
+    "vector_similarity_weight": 0.3,
+    "highlight": true,
+    "summarize": true,
+    "llm_id": "Qwen3-32B@OpenAI-API-Compatible",
+    "temperature": 0.2,
+    "top_p": 0.9,
+    "presence_penalty": 0.0,
+    "frequency_penalty": 0.0,
+    "related": true,
+    "mindmap": true,
+    "meta_data_filter": {
+      "method": "auto"
+    }
+  }'
 ```
 
 ## 问题与知识
@@ -150,6 +200,27 @@ curl -s -X POST "http://192.168.30.214:8009/v1/file_search/retrieval" \
 
 
 # 2.VitaRAG
+
+## 启动
+
+```
+cd /mnt/d/ASUS/biorag/ragflow-0.22.0
+
+cd /mnt/d/ASUS/xiaozhi/ragflow-0.22.0
+
+export PYTHONPATH=$(pwd)
+
+export UV_INDEX=https://mirrors.aliyun.com/pypi/simple
+
+source .venv/bin/activate
+
+cd web
+npm run dev
+```
+
+
+
+
 
 ## 问题与知识
 
@@ -218,9 +289,7 @@ Qwen2RMSNorm 的功能是均方根归一化 (Root Mean Square Normalization) 。
 |      |      |      |
 |      |      |      |
 
-# 4.语音分离
-
-## 语音分离的数据库更新
+# 4.语音分离的数据库更新
 
 bz_opinion_file @smart_app_bzopinion (smart_app_bzopinionyuqing) -表
 
@@ -246,7 +315,7 @@ WHERE f.id = 1416097737165766656;
 
 ## 公司地址
 
-cd /data/upload_file/05_zhishiku/mxx 公司地址192.168.30.214
+cd /data/upload_file/05_zhishiku/mxx/updatevociecontext 公司地址192.168.30.214
 
 ## 配置miniconda开发环境
 
@@ -312,8 +381,6 @@ docker exec -it voice-sync-task /bin/bash
 docker build -t voice-sync-task:v1 .
 ```
 
-
-
 ## 启动容器
 
 ```
@@ -323,6 +390,18 @@ docker run -d \
   -e DB_PASS="smart_app_bzopinion@la22" \
   -e TABLE_FILE="bz_opinion_file" \
   -e TABLE_ANALYSIS="bz_opinion_voice_analysis" \
+  -v $(pwd)/logs:/app/logs \
+  --restart always \
+  voice-sync-task:v1
+  
+  docker run -d \
+  --name voice-app_update \
+  -e DB_HOST="10.253.97.190" \
+  -e DB_PASS="smart_app_bzopinion@la22" \
+  -e TABLE_FILE="bz_opinion_file" \
+  -e TABLE_ANALYSIS="bz_opinion_voice_analysis" \
+  -e MINIO_URL="http://10.253.63.201:50079" \
+  -e API_URL="http://10.253.63.200:50086/diarize" \
   -v $(pwd)/logs:/app/logs \
   --restart always \
   voice-sync-task:v1
@@ -343,6 +422,22 @@ docker logs -f 3f1e569a3b2fa835a43d806d407064b492eb9b1cc4ed187d3a6e87b7634be89a
 
 ```
 docker exec -it voice-sync-app /bin/bash
+```
+
+
+
+## 生产docker部署（无网络环境）
+
+```
+docker build -t voice-sync-task:v1 .
+
+docker save -o voice-sync-task_v1.tar voice-sync-task:v1
+
+docker load -i voice-sync-task_v1.tar
+
+docker images
+
+docker run -d voice-sync-task:v1
 ```
 
 
@@ -391,4 +486,83 @@ FROM bz_opinion_file_copy1 f
 LEFT JOIN bz_opinion_voice_analysis_copy1 v ON f.id = v.file_id
 WHERE f.id = 1438564778296475648;
 ```
+
+
+
+
+
+# 5.人声分离部署
+
+```
+cd /data/xyx/diarization-api
+
+开放环境启动容器：
+docker run -d --name diarization_container \
+  --gpus all \
+  --network host \
+  -e HF_ENDPOINT=https://hf-mirror.com \
+  -e HF_HUB_ENABLE_HF_TRANSFER=0 \
+  -e CUDNN_LIB_DIR=/opt/conda/lib/python3.11/site-packages/nvidia/cudnn/lib \
+  -e LD_LIBRARY_PATH=/opt/conda/lib/python3.11/site-packages/nvidia/cudnn/lib \
+  -v $(pwd)/results:/app/results \
+  -v /data/xyx/diarization-api/huggingface:/root/.cache/huggingface \
+  -v /data/xyx/diarization-api/torch:/root/.cache/torch \
+  diarization-api:latest
+  
+  
+测试：
+  curl -X POST "http://localhost:8000/diarize"   -F "url=http://192.168.30.165/file-resource/1919643053772152833/bz_opinion_analysis_file/analysis/20250811142333-18679590406-S20250811142333431037AC130E1711279928-0000107800184263_1763022114938.mp3"   -F "language=zh"   -F "whisper_model=medium"   -F "device=cuda"   -F "no_stem=true" 
+  
+删除容器：
+docker stop 497b1966f4c8
+docker rm 497b1966f4c8
+
+```
+
+## 堡垒机权限设置与指令
+
+```
+写入权限被限制
+sudo chmod 777 /data
+```
+
+## 生产部署
+
+```
+curl -X POST "http://10.253.63.200:50086/diarize"   -F "url=http://10.253.63.201:50079/file-resource/1919643053772152833/bz_opinion_analysis_file/analysis/20251213120942-15542659021-S20251213120942e62e96a93f79416d9-0000101004691001_1765599358973.mp3"   -F "language=zh"   -F "whisper_model=medium"   -F "device=cuda"   -F "no_stem=true"
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
