@@ -136,7 +136,7 @@ net stop mysql
 
 mysqld -remove
 
-
+![image-20251222211143965](./pic/image-20251222211143965.png)
 
 
 
