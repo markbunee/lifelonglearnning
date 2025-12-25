@@ -629,6 +629,23 @@ EEG → EEGEncoder → Q-former → EEG Query Tokens
 
 
 
+    
+
+    graph TD
+        Input[输入 Hidden States + Timestep] --> AdaLN[AdaLayerNormZero]
+        AdaLN -->|生成| Params[调制参数: gate_msa, shift_mlp, scale_mlp, gate_mlp]
+        AdaLN -->|输出| NormedX[归一化后的 X]
+    NormedX --> Attn[DiTAttention]
+    Attn -->|输出 * gate_msa| Res1[残差连接 1]
+    Input --> Res1
+    
+    Res1 --> Norm2[LayerNorm]
+    Norm2 -->|应用 shift_mlp & scale_mlp| Mod2[调制后的 X]
+    Mod2 --> MLP[DiTMLP]
+    MLP -->|输出 * gate_mlp| Res2[残差连接 2]
+    
+    Res1 --> Res2
+    Res2 --> Output[输出 Hidden States]
 
 
 

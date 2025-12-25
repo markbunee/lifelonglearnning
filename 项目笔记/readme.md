@@ -88,10 +88,6 @@ vim /etc/hosts
 
  export DOC_ENGINE=infinity   app.py读取setting文件
 
-
-
-
-
 ## 测试
 
 ```
@@ -175,30 +171,6 @@ curl -s -X POST "http://localhost:8009/v1/file_search/retrieval" \
 
 ## 问题与知识
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # 2.VitaRAG
 
 ## 启动
@@ -217,10 +189,6 @@ source .venv/bin/activate
 cd web
 npm run dev
 ```
-
-
-
-
 
 ## 问题与知识
 
@@ -245,10 +213,6 @@ A：不能，虽然 `.env` 文件夹（通常是 Python 的虚拟环境）里包
 ## 启动
 
 后端环境和前端环境和启动用ragflow的，加载源码进行
-
-
-
-
 
 # 3.脑机eeg图像文本生成统一多模态框架
 
@@ -367,13 +331,12 @@ docker exec -it voice-sync-task /bin/bash
 
 退出容器：输入 exit 或按 Ctrl + D
 
-停止并清除容器：docker stop voice-sync-app && docker rm voice-sync-app
+停止并清除容器：docker stop voice-sync-app 
+docker rm voice-sync-app
 
-
+docker restart
 
 ```
-
-
 
 ## 构建镜像
 
@@ -385,15 +348,20 @@ docker build -t voice-sync-task:v1 .
 
 ```
 docker run -d \
-  --name voice-app_update \
+  --name voice-app_update_v2 \
   -e DB_HOST="192.168.30.62" \
   -e DB_PASS="smart_app_bzopinion@la22" \
   -e TABLE_FILE="bz_opinion_file" \
   -e TABLE_ANALYSIS="bz_opinion_voice_analysis" \
   -v $(pwd)/logs:/app/logs \
+  -v $(pwd)/updatecontent.py:/app/updatecontent.py \
   --restart always \
   voice-sync-task:v1
   
+  
+ 生产： 
+ cd /home/szbz/mxx_linshi/updatevociecontext/
+
   docker run -d \
   --name voice-app_update \
   -e DB_HOST="10.253.97.190" \
@@ -403,11 +371,13 @@ docker run -d \
   -e MINIO_URL="http://10.253.63.201:50079" \
   -e API_URL="http://10.253.63.200:50086/diarize" \
   -v $(pwd)/logs:/app/logs \
+  -v $(pwd)/updatecontent.py:/app/updatecontent.py \
   --restart always \
   voice-sync-task:v1
+  
+  支持挂载宿主机代码
+
 ```
-
-
 
 ## 查看运行日志
 
@@ -424,8 +394,6 @@ docker logs -f 3f1e569a3b2fa835a43d806d407064b492eb9b1cc4ed187d3a6e87b7634be89a
 docker exec -it voice-sync-app /bin/bash
 ```
 
-
-
 ## 生产docker部署（无网络环境）
 
 ```
@@ -439,8 +407,6 @@ docker images
 
 docker run -d voice-sync-task:v1
 ```
-
-
 
 ## 传参样例
 
@@ -482,8 +448,8 @@ SELECT
     JSON_VALID(v.context) AS is_json_valid,
     -- 计算解析出的对话条数
     JSON_LENGTH(v.context) AS dialog_count
-FROM bz_opinion_file_copy1 f
-LEFT JOIN bz_opinion_voice_analysis_copy1 v ON f.id = v.file_id
+FROM bz_opinion_file f
+LEFT JOIN bz_opinion_voice_analysis v ON f.id = v.file_id
 WHERE f.id = 1438564778296475648;
 ```
 

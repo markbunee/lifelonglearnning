@@ -104,7 +104,11 @@ git remote add origin https://github.com/markbunee/lifelonglearnning.git
 
 其他知识点：
 
+```
+git config --global https.proxy http://127.0.0.1:7897
+git config --global http.proxy http://127.0.0.1:7897
 
+```
 
 1.换行符warning
 
