@@ -169,6 +169,19 @@ curl -s -X POST "http://localhost:8009/v1/file_search/retrieval" \
   }'
 ```
 
+## docker日志查询
+
+```
+最新的 100 行并开始持续追踪，而不是从头看起，请使用 --tail 参数：
+docker logs -f --tail 100 docker-ragflow-cpu-1
+查看最近 30 分钟的日志：
+docker logs --since 30m docker-ragflow-cpu-1
+查看指定日期之后的日志：
+
+```
+
+
+
 ## 问题与知识
 
 # 2.VitaRAG
@@ -216,42 +229,36 @@ A：不能，虽然 `.env` 文件夹（通常是 Python 的虚拟环境）里包
 
 # 3.脑机eeg图像文本生成统一多模态框架
 
+```
+模型缓存地址：
+缓存目录（默认是 ~/.cache/huggingface/hub/）
 临时处理配置源：
-
 export http_proxy="http://127.0.0.1:7890" 
 
 export https_proxy="http://127.0.0.1:7890"
 
+export HF_ENDPOINT="https://hf-mirror.com"
+
 pip install -r requirements_web_demo.txt -i https://mirrors.aliyun.com/pypi/simple/
 
 source ~/.bashrc
+模型烂尾后需要删除然后再下载：
+
+rm -rf ~/.cache/huggingface/hub/models--Qwen--Qwen2.5-Omni-7B
 
 ```
-modeling_qwen2_5_omni_low_VRAM_mode.py
 
-Qwen2RMSNorm 的功能是均方根归一化 (Root Mean Square Normalization) 。简单来说，它就像是神经网络中的“稳定器”或“调节阀”。
-- 稳定数值 ：在深度神经网络（特别是像 Qwen 这样的大模型）中，数据经过很多层计算后，数值可能会变得非常大或非常小（梯度爆炸或消失）。RMSNorm 把这些数值拉回到一个合理的范围内。
-- 加速训练 ：通过规范化数据的分布，让模型更容易学习，收敛得更快。
-它与传统 LayerNorm 的区别（为什么叫 RMS）：
+## huggingface下载机制
 
-- 传统 LayerNorm ：先减去平均值（Center），再除以标准差（Scale）。
-- RMSNorm ： 不减去平均值 ，直接除以均方根（RMS）。
-  - 好处 ：计算量更少，速度更快，而且实验证明在 Transformer 模型中效果一样好甚至更好。
-比喻： 想象一个班级的考试成绩，有的考 100 分，有的考 10 分，差异很大。
+Hugging Face 的下载机制分为三层：
 
-- LayerNorm 像是先把全班平均分平移到 0 分，再缩放。
-- RMSNorm 则是直接把大家的分数按比例缩放，让分数的“能量”（平方和）保持在一个标准水平，不管你原来均值是多少。
-```
+**Blobs 文件夹**：存储真实的大文件数据。
+
+**Snapshots 文件夹**：存储指向 Blobs 的“快捷方式”（软链接）。
+
+**验证机制**：当你下载中断时，Blobs 里可能留下了一个大小不正确的文件。再次启动时，`transformers` 库检查发现 `model-00003...` 这个文件在索引里有，但本地实体文件是不完整的或不存在，就会抛出 `OSError`。
 
 
-
-|      |      |      |
-| ---- | ---- | ---- |
-|      |      |      |
-|      |      |      |
-|      |      |      |
-|      |      |      |
-|      |      |      |
 
 # 4.语音分离的数据库更新
 
@@ -461,6 +468,9 @@ WHERE f.id = 1438564778296475648;
 
 ```
 cd /data/xyx/diarization-api
+export HF_ENDPOINT="https://hf-mirror.com"
+设置huggingface
+export HF_HOME="/path/to/your/big_disk/huggingface"
 
 开放环境启动容器：
 docker run -d --name diarization_container \
@@ -498,9 +508,7 @@ sudo chmod 777 /data
 curl -X POST "http://10.253.63.200:50086/diarize"   -F "url=http://10.253.63.201:50079/file-resource/1919643053772152833/bz_opinion_analysis_file/analysis/20251213120942-15542659021-S20251213120942e62e96a93f79416d9-0000101004691001_1765599358973.mp3"   -F "language=zh"   -F "whisper_model=medium"   -F "device=cuda"   -F "no_stem=true"
 ```
 
-
-
-
+## Bash配置
 
 
 
