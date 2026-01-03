@@ -629,7 +629,7 @@ EEG → EEGEncoder → Q-former → EEG Query Tokens
 
 
 
-    
+​    
 
     graph TD
         Input[输入 Hidden States + Timestep] --> AdaLN[AdaLayerNormZero]
@@ -649,13 +649,17 @@ EEG → EEGEncoder → Q-former → EEG Query Tokens
 
 
 
+# 李宏毅diffusionmodle
 
+【【李宏毅】2025最新的Diffusion Model教程！1小时清楚扩散模型原理，简直不要太爽！人工智能|机器学习|OpenAI】 https://www.bilibili.com/video/BV19EVUzrEF4/?share_source=copy_web&vd_source=b1560a316ec9a486cde3dbbfef0ffd0f
 
+![image-20251231175245027](./pic/image-20251231175245027.png)
 
+所有模型本质不是使用gpt图像生成法而是先计算normal distribution 
 
+![image-20251231175415925](./pic/image-20251231175415925.png)
 
-
-
+![image-20251231175657356](./pic/image-20251231175657356.png)
 
 
 

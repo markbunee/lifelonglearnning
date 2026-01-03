@@ -139,15 +139,17 @@ agent：一个**概念或架构模式**，而非特定工具，一个大模型�
 
 ![image-20251207220857755](./pic/image-20251207220857755.png)
 
+![image-20260103194921783](./pic/image-20260103194921783.png)
 
+cline和cursor+mcp
 
+smithery ai
 
+MCP是啥？技术原理是什么？一个视频搞懂MCP的一切。Windows系统配置MCP，Cursor,Cline 使用MCPhttps://youtu.be/McNRkd5CxFY?si=fRwPGqsFUr6T6vQe
 
+mcp本质就是用户用命令行调用了nodejs程序或者python程序去调用
 
-
-
-
-
+Agent Skill 从使用到原理，一次讲清：https://youtu.be/yDc0_8emz7M?si=st7DnmUluekPKlrT
 
 
 
