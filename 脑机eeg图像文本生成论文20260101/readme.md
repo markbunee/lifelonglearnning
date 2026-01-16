@@ -649,6 +649,266 @@ EEG → EEGEncoder → Q-former → EEG Query Tokens
 
 
 
+# 260109脑机整理
+
+这些创新点采用了学术论文的叙述风格，分别从 特征编码（Encoder） 、 语义桥接（Bridge/Injection） 、**统一生成架构（Framework）**三个维度进行了归纳：
+
+### 创新点一：基于 MoE 架构的多专家 EEG 语义-视觉解耦编码器
+Title: Disentangled EEG Representation via Mixture-of-Experts (MoE) with Triple Contrastive Alignment
+
+- 针对问题 (Problem): 脑电信号（EEG）不仅信噪比低（Low SNR），而且包含高度纠缠的信息。传统的单一编码器难以同时提取出适合图像生成的“细粒度视觉结构特征”和适合文本生成的“高层语义抽象特征”，导致多模态生成时经常出现图文不匹配或特征丢失的问题。
+- 解决方案与贡献 (Method & Contribution):
+  - 架构设计： 在 clip_models.py 中，我们提出了一种基于 SpatialMoEEncoder 的编码策略。利用 DreamDiffusion 的预训练权重作为强大的特征提取骨干（Backbone），并在其后引入了三个轻量级专家模块（Adapter Experts）： 视觉专家 (Visual Expert) 、 语义专家 (Semantic Expert) 和 全局融合专家 (Fusion Expert) 。
+  - 三重对比学习： 通过设计三重对比学习目标，我们将 EEG 特征分别与 CLIP 空间的 Image Embedding 和 Text Embedding 进行强对齐。
+  - 核心价值： 这种 MoE 机制成功实现了脑电信号的 特征解耦 。视觉专家专注于恢复图像的空间布局，语义专家专注于提取语言描述信息，从而为下游的双分支生成提供了更纯净、更具针对性的特征输入。
+
+### 创新点二：以 LLM 为核心的 Q-Former 语义枢纽与时序查询注入机制
+Title: LLM-Centric EEG Query Injection via Q-Former for Robust Semantic Interpretation
+
+- 针对问题 (Problem): EEG 是变长的连续时序信号，而 LLM（如 Qwen2.5）是离散的 Token 处理系统。直接将长序列 EEG 映射为 Token 会导致上下文窗口爆炸且引入大量噪声；简单的池化操作则会丢失时序细节。如何有效地将连续脑电信号“翻译”为 LLM 可理解的语义提示是一个巨大的挑战。
+- 解决方案与贡献 (Method & Contribution):
+  - 架构设计： 在 out_qformer.py 和主模型逻辑中，我们引入了 EEGQFormer 。它不直接压缩信号，而是定义了一组可学习的 Latent Queries 。这些查询向量通过 Cross-Attention 机制，从 Encoder 输出的变长 EEG 特征中动态抓取关键信息，并压缩为固定长度的 $K$ 个查询嵌入（Query Embeddings）。
+  - 注入策略： 这些查询嵌入直接替换 <eeg> 占位符注入到 Thinker (LLM) 的输入层。
+  - 核心价值： 确立了 LLM 作为“语义枢纽” (Semantic Hub) 的地位。Q-Former 充当了“软连接”桥梁，不仅解决了模态对齐的维度问题，还利用 LLM 强大的推理能力，对充满噪声的 EEG 信号进行了二次语义清洗和逻辑补全，显著提高了意图解码的准确率。
+
+
+
+### 创新点三：语义增强的“Thinker-Painter”双流协同生成框架 (EEGOmni)
+Title: EEGOmni: A Unified Dual-Branch Framework for Coherent Multi-Modal Brain-to-World Generation
+
+- 针对问题 (Problem): 现有的脑电解码工作通常是单模态的（仅生成图像或仅生成文本）。而在多模态场景下，如果两个生成过程是独立的，往往会导致生成的文本描述与生成的图像内容不一致（Inconsistency）。此外，仅靠 EEG 信号直接生成图像，往往因为语义缺失导致画面模糊或物体错位。
+- 解决方案与贡献 (Method & Contribution):
+  - 架构设计： 我们提出了 EEGOmni 端到端框架。该框架包含两个核心角色： Thinker (基于 Qwen2.5 的 LLM) 和 Painter (基于 Diffusion 的生成模型，替换了原有的 Talker)。
+  - 协同机制： 这是一个**同源条件（Same-Source Conditioned）**的双分支系统。
+    1. Thinker 首先基于 EEG 查询生成精确的文本描述（Caption/Description）。
+    2. Painter 创新性地采用 双重调节（Dual Conditioning） ：它同时接收来自 Encoder 的视觉对齐向量（Visual Embedding）和来自 Thinker 生成的文本描述（Text Prompt）。
+  - 核心价值： 实现了 语义引导的图像生成 。Thinker 生成的文本为 Painter 提供了清晰的语义蓝图，而 Encoder 的向量补充了视觉细节。这种“以文辅图、图文共生”的机制，解决了单一模态生成信息匮乏的问题，大幅提升了生成内容的一致性和质量，并展示了该框架未来扩展更多模态的潜力。
+
+
+
+让 Q-Former跨注意到“序列化的 EEG patch tokens”而非两个池化向量：
+
+- 目前 kv_tokens 是 [emb_img, emb_txt] 这两个512维向量，Q-Former只能做很弱的提示映射，无法利用时序细节。
+- 更优做法：将 SpatialMoEEncoder 返回 backbone latent 的 patch 序列（例如 latent[:, 1:, :]），再线性映射到 512 维作为 KV 输入，让 Q-Former真正“压缩变长时序”为固定 K 查询。
+- 可选实现路径：在 SpatialMoEEncoder 增加一个方法返回 patch-level tokens；或直接在训练脚本中调用 backbone.forward_encoder 并用线性层转到 512 维。
+
+
+
+### train_qformer.py的情况
+
+train_qformer.py 的数据加载方式与 dataset.py 的 TripletDataset 定义是一致的，字段与形状能正确对接，路径插值也能被解析到绝对路径。
+
+返回字段一致：TripletDataset 在 return_text=True 时返回四元组 (eeg_signal, image_vector, text_vector, raw_text)，训练代码也按四项解包为 (eeg_signal, img_vecs, txt_vecs, text_captions)。
+
+EEG 形状一致：dataset.py 将 EEG 先裁剪到 440ms 再插值到 512，最终形状为 [Channels=128, Time=512]，与 SpatialMoEEncoder 输入 [B, 128, 512] 完全匹配。
+
+
+
+为保证 EEG→Thinker 的传达准确，核心要点是：构造正确的因果语言建模目标、保证序列拼接与位置编码对齐、确保 Q-Former 能收到非零梯度。
+
+
+
+- 位置编码对齐：为拼接后的 [EEG 查询 + 文本] 显式构造 position_ids，避免不同实现下的自动推断失败导致 loss 异常。
+- 标签稳定化：将文本首 token（通常是 BOS）置为 -100，避免在序列首位训练不稳定；PAD 位置也已忽略。
+- 真实平均损失：平均损失用“实际处理的 batch 数”计算，避免因跳过样本而出现接近 0 的假平均。
+- 缓存关闭与设备对齐：已在上一轮修改中关闭 use_cache 并对齐 inputs_embeds 的设备，保障梯度传回 Q-Former。
+
+
+
+用时序 patch token 做 KV：当前 KV 仅两条 512 维向量（img/text embedding），Q-Former难以捕捉时序细节。建议让 EEGEncoder 返回 patch-level tokens（如 latent[:,1:,:]），再线性到 512 维作为 KV，Q-Former更容易“压缩变长时序为固定 K 查询”。我可以进一步给出接口改动预览。
+
+
+
+- 使用因果语言建模（Teacher Forcing）：把 EEG 查询嵌入作为前缀，文本 caption 作为目标，让 Thinker 只在文本位置计算损失（EEG 区域 label=-100）。这已在当前代码中实现。
+- 模板化提示：把 text_captions 包装成固定模板提升稳定性，例如“EEG-Intent: <描述>”。保证输入 distribution 更稳定。
+- 保证文本有效性：过滤空字符串已做，建议确保每条 caption 至少 10–20 tokens，避免过短导致梯度稀薄。
+
+
+
+EEGEncoder（MoE 骨干）：
+- 输入 EEG [B, 128, 512]，输出两个对齐到 CLIP 空间的向量 emb_img、emb_txt，维度均为 512。
+- 代码参考: clip_models.py
+
+Q-Former（EEG→Thinker 适配器）：
+- KV 输入：在训练中把 emb_img 与 emb_txt 堆叠为 kv_tokens，形状 [B, 2, 512]。
+- 维度对齐：kv_proj 把 kv_dim=512 投到 Thinker 的隐藏维度 hidden_size（例如 3584），保证后续与 LLM兼容。参见 out_qformer.py 中的 kv_proj 与 forward。
+- 查询机制：定义 K 个可学习的 query_embed，经自注意力增强，再做跨注意力从 KV 中“抓取”信息，随后过 FFN 与层归一化，得到 [B, K, hidden_size] 的查询序列。
+- 输出用于注入 Thinker：训练脚本调用 qformer(..., return_sequence=True) 返回查询序列用于拼接。
+
+注入 Thinker（LLM）：
+- 获取文本 token 的嵌入 text_token_embeds。
+- 拼接 inputs_embeds = [EEG 查询序列, 文本嵌入]，再构造 attention_mask 与 labels（EEG 部分设 -100，文本 PAD 与 BOS 设 -100）。
+- 把 inputs_embeds、attention_mask、position_ids 一并喂给 Thinker，使用因果语言建模目标在文本位置训练。参考 train_qformer.py 。
+
+
+
+关于“Q-Former是否替代了投影”：
+
+- 是的，它替代并增强了“简单线性投影”的角色。
+  - kv_proj 是把 EEGEncoder 的特征维度（如 512）映射到 Thinker 的隐藏维度（如 3584），确保维度兼容。
+  - 更关键的是，Q-Former 不只是线性投影，它用可学习的 K 个查询向量，通过自注意力和跨注意力从 KV 中动态抽取/融合关键信息，再输出 [B, K, hidden_size] 的查询序列作为 Thinker 的“前缀隐向量”。这比单层线性 projector（如 stepa_test 里的 eeg_projector）表达力更强。
+  - 最终注入方式不是替换 tokenizer，而是直接用 inputs_embeds 把这些查询序列拼接在文本嵌入前面，让 Thinker把它们当作条件上下文。
+
+提升“准确传达”：
+
+- 更丰富的 KV：目前 KV 是两个向量 [emb_img, emb_txt]，信息过于浓缩。建议让 EEGEncoder返回 patch-level tokens（例如 latent[:, 1:, :]），再线性到 512 作为 KV，Q-Former才能“压缩变长为固定 K 查询”，更适合 EEG 的时序性质。
+
+- 标签策略：保留 BOS 监督，或仅在“文本长度≥3”时忽略 BOS；短文本避免过度屏蔽。
+
+- 梯度监控与稳定化：
+  - 保留 [DEBUG] Q-Former grad norm，确保非零。
+  
+  - 可加梯度裁剪 clip_grad_norm_(qformer.parameters(), 1.0)。
+
+  - 在 Q-Former 中加入适度 dropout（0.1）与残差缩放，提高稳定性
+  
+    
+
+ 快速自查清单
+
+- 首个 batch 打印 Non-ignore labels count 是否 > 0。
+- inputs_embeds 与 attention_mask、position_ids 的长度是否一致。
+- text_captions 是否普遍过短；若是，考虑使用模板化提示或更高质量 caption。
+- Q-Former grad norm 是否非零
+
+
+
+编码器训练目标是 InfoNCE 对齐，使 [EEG→Image/Text] 的两个 512 维向量在 CLIP 空间对齐，逻辑清晰，代码见 main.py 的 train_one_epoch/validate。
+
+编码器当前输出是聚合后的共享特征 latent[:,1:,:].mean → 三头 Adapter → L2 normalize，见 clip_models.py 。
+
+Q-Former训练侧 KV 只有两条向量 [emb_img, emb_txt]（长度为 2），跨注意力的“选择空间”太小，难以压缩/筛选时序细节，导致训练很容易出现监督稀薄、loss 偏低或 0 的现象。训练代码见 train_qformer.py 。
+
+
+
+使用时序 patch 作为 KV
+
+- 让 EEGEncoder暴露 patch-level tokens（例如 latent[:, 1:, :]，形状 [B, N_patches, 1024]），再线性到 512 维作为 Q-Former 的 kv_tokens，替代当前的两个向量。
+- Q-Former在更长 KV 上做 cross-attention，才能“压缩变长为固定 K 查询”，语义传达密度会显著提高。
+
+
+
+### 维度和数据流
+
+EEG 输入
+- 形状: [B, 128, 512]（由数据集裁剪到 440ms并插值到 512）
+- 参考: dataset.py
+
+EEG 编码器输出
+- 三个轻量专家头把 backbone 特征映射到 512 维，再做 MoE 融合与 L2 归一化，得到两个对齐向量：
+  - final_img_embedding: [B, 512]
+  - final_text_embedding: [B, 512]
+- 参考: clip_models.py
+
+Q-Former KV 输入
+
+- kv_tokens = stack([emb_img, emb_txt], dim=1)
+- 形状: [B, 2, 512]
+- 训练脚本中传参 kv_dim=512，保持一致
+- 参考: train_qformer.py
+
+Q-Former内部对齐与生成
+- kv_proj: 线性把 512 → hidden_size（如 3584），保证与 Thinker对齐 参考: out_qformer.py
+- 查询向量: K 个可学习的 query_embed，经自注意+跨注意从 KV 选择信息，再经 FFN 和 LayerNorm 参考: out_qformer.py
+- 输出序列: [B, num_queries, hidden_size]（比如 [B, 16, 3584]）
+
+注入 Thinker
+- 文本 token 嵌入: [B, T, hidden_size]
+- 拼接: inputs_embeds = concat([EEG 查询序列, 文本嵌入], dim=1) → [B, num_queries + T, hidden_size]
+- labels: EEG 部分设为 -100，文本部分用真实 token id（PAD 忽略），仅在文本位置计算语言建模损失
+- 参考: train_qformer.py
+
+
+
+EEG 编码器输出的两个 512 维向量
+- final_img_embedding: EEG 与 CLIP-Image空间对齐的视觉特征，偏向图像结构/外观信息
+- final_text_embedding: EEG 与 CLIP-Text空间对齐的语义特征，偏向语言描述信息
+
+
+
+Q-Former输出的 K 个查询向量
+- 这些不是分类或概率，而是 Thinker 隐藏空间中的“条件前缀 tokens”
+- 它们携带了从 EEG 中抽取的关键语义/上下文，被 Thinker 当作提示性上下文，用于改进后续文本生成
+
+
+
+用 backbone 的 latent[:, 1:, :]（[B, N_patches, 1024]）作为 KV，而不是两个汇总向量
+
+正向影响为主：
+- 使用时序 patch 让 Q-Former真正“压缩变长为固定 K 查询”，能从 EEG 时序里选择关键信息，语义密度和可靠性大幅提升。
+- 相比两个全局向量（过于浓缩），更丰富的 KV 能显著减少信息缺失和对齐偏差，对文本表达一致性更友好。
+
+
+
+新增方法 get_patch_tokens(x) 返回 latent[:, 1:, :]，形状 [B, N_patches, 1024]
+
+这个新增不用我重新训练编码器吧：
+
+- 新增的 get_patch_tokens(x) 只是“暴露”编码器 Backbone 的中间输出（latent 序列，去掉 CLS），本质上是一次前向计算的便捷接口，不会修改任何参数，也不会影响你已经微调好的权重。
+- 你当前的编码器已经在 DreamDiffusion 预训练基础上工作，latent 序列正是该主干的原生输出；改为让 Q-Former消耗这些 patch tokens，不需要重新训练编码器。
+
+
+
+BOS/EOS/PAD 是 tokenizer 给文本序列加的 特殊符号 ，用来告诉模型“句子从哪开始/到哪结束/哪些位置是补齐的空位”。在你现在的 Q-Former 微调里，它们直接影响 labels 和 attention_mask
+
+
+
+BOS（Beginning Of Sequence）
+
+- 含义：序列开始标记，相当于“<开始>”。
+- 作用：让模型知道这是一个新句子的开头；有些模型生成时会从 BOS 开始预测后续 token。
+- 在 loss 里：通常可以训练也可以忽略（设为 -100），但如果你的文本很短，忽略 BOS 可能导致“有效监督 token”变成 0。
+
+EOS（End Of Sequence）
+
+- 含义：序列结束标记，相当于“<结束>”。
+- 作用：模型学会何时停止生成。
+- 在 loss 里：一般保留训练，让模型学会输出 EOS 结束。
+
+PAD（Padding）
+
+- 含义：补齐标记，相当于“<空位>”。当一个 batch 内句子长短不一时，需要把短句补到同一长度。
+- 作用：
+  - attention_mask 中 PAD 位置是 0（表示“这里不参与注意力/不是真实内容”）
+  - 非 PAD 位置是 1
+- 在 loss 里：必须忽略 PAD（对应位置 labels 设为 -100），否则模型会被迫去预测“空位”，训练会被严重污染
+
+
+
+### 核心指标（必须）
+
+1. Top-K 检索准确率
+
+- Top-1, Top-5, Top-10 准确率
+
+- 衡量模型能否从 EEG 找到对应的图像/文本
+
+1. 平均余弦相似度
+
+- 正样本相似度（匹配对）
+
+- 负样本相似度（不匹配对）
+
+- 分离比（正样本/负样本）
+
+1. 训练健康指标
+
+- 梯度范数（检查梯度是否正常）
+
+- 参数更新检查（确认微调是否生效）
+
+### 增强指标（推荐）
+
+1. 相似度分布可视化
+
+- 正负样本相似度分布对比
+
+1. 检索性能曲线
+
+- 不同 K 值的准确率
+
+
+
 # 李宏毅diffusionmodle
 
 【【李宏毅】2025最新的Diffusion Model教程！1小时清楚扩散模型原理，简直不要太爽！人工智能|机器学习|OpenAI】 https://www.bilibili.com/video/BV19EVUzrEF4/?share_source=copy_web&vd_source=b1560a316ec9a486cde3dbbfef0ffd0f
@@ -663,31 +923,33 @@ EEG → EEGEncoder → Q-former → EEG Query Tokens
 
 
 
+![image-20260111171152319](./pic/image-20260111171152319.png)
+
+![image-20260111171431098](./pic/image-20260111171431098.png)
+
+![image-20260111171447756](./pic/image-20260111171447756.png)
+
+![image-20260115145850828](./pic/image-20260115145850828.png)
+
+![image-20260115145924853](./pic/image-20260115145924853.png)
+
+![image-20260115145935161](./pic/image-20260115145935161.png)
+
+![image-20260115150013026](./pic/image-20260115150013026.png)
+
+文字decoder：
+
+![image-20260115150059279](./pic/image-20260115150059279.png)
+
+FID去衡量图片生成效果 clipscore
+
+现有个train好的cnnmodle
+
+![image-20260115150442656](./pic/image-20260115150442656.png)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+![image-20260115150541881](./pic/image-20260115150541881.png)
 
 
 
