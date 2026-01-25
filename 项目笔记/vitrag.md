@@ -47,5 +47,19 @@ A：不能，虽然 `.env` 文件夹（通常是 Python 的虚拟环境）里包
 import os
 os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 os.environ["HF_HOME"] = "D:/huggingface_cache"
+
+
+
+# BiomedCLIP方法
+python main.py --input "D:\ASUS\biocls\mineru_test\IJN-510417-garlic-derived-exosome-like-nanovesicles--a-promising-natura.pdf" --output "D:\ASUS\output" --method biomedclip
+
+# 智谱VLM方法
+python main.py --input "D:\ASUS\biocls\mineru_test\IJN-510417-garlic-derived-exosome-like-nanovesicles--a-promising-natura.pdf" --output "D:\ASUS\output" --method glm_vlm --zhipu_key "your_key"
+
+# ResNet18方法
+python main.py --input "D:\ASUS\biocls\mineru_test\IJN-510417-garlic-derived-exosome-like-nanovesicles--a-promising-natura.pdf" --output "D:\ASUS\output" --method resnet18 --resnet18_model "D:\ASUS\biocls\best_resnet18.pth"
+
+# 手动裁剪
+python main.py --input "D:/papers/paper.pdf" --output "D:/output" --method biomedclip --manual_crop '{"x1":100,"y1":200,"x2":500,"y2":600}'
 ```
 
