@@ -153,5 +153,9 @@ Agent Skill 从使用到原理，一次讲清：https://youtu.be/yDc0_8emz7M?si=
 
 
 
+## rag
+
+![image-20260202160725157](./pic/image-20260202160725157.png)
+
 
 

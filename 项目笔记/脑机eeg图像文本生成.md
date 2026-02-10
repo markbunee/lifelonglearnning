@@ -202,7 +202,48 @@ Conda 环境的本质：
 
 
 
+```
+python stageA1_eeg_pretrain.py \
+  --root_path ~/DreamDiffusion-main \
+  --roi VC \
+  --num_epoch 20 \
+  --batch_size 64 \
+  --mask_ratio 0.1 \
+  --patch_size 4 \
+  --embed_dim 1024 \
+  --decoder_embed_dim 512 \
+  --depth 24 \
+  --num_heads 16 \
+  --decoder_num_heads 16 \
+  --mlp_ratio 1.0 \
+  --include_hcp True \
+  --include_kam True
 
+
+python /home/temp_user/MXX/DreamDiffusion-main/code/eeg_ldm.py `
+  --root_path DreamDiffusion-main `
+  --pretrain_gm_path /home/temp_user/MXX/DreamDiffusion-main/pretrains `
+  --pretrain_mbm_path /home/temp_user/MXX/DreamDiffusion-main/results\eeg_pretrain\<你的时间戳>\checkpoints\checkpoint.pth `
+  --eeg_signals_path /home/temp_user/MXX/DreamDiffusion-main/datasets\eeg_5_95_std.pth `
+  --splits_path /home/temp_user/MXX/DreamDiffusion-main/datasets\block_splits_by_image_single.pth `
+  --batch_size 25 `
+  --lr 5.3e-5 `
+  --num_epoch 50 `
+  --ddim_steps 250 `
+  --subject 4
+  
+  
+ python /home/temp_user/MXX/DreamDiffusion-main/code/eeg_ldm.py \
+  --root_path /home/temp_user/MXX/DreamDiffusion-main \
+  --pretrain_gm_path /home/temp_user/MXX/DreamDiffusion-main/pretrains \
+  --pretrain_mbm_path "/home/temp_user/MXX/DreamDiffusion-main/checkpoint.pth" \
+  --batch_size 4 \
+  --lr 5.3e-5 \
+  --num_epoch 50 \
+  --ddim_steps 250
+  
+  
+```
 
 
 
