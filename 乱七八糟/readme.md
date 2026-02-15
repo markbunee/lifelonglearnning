@@ -96,5 +96,12 @@ tools resources promote->mcp server mcp只负责管理而不管模型
 
 ![image-20250912162155973](./pic/image-20250912162155973.png)
 
-## 进程&进程&协程
+## python小坑
+
+```
+case1 = [9, 8, 7, 6]
+case1 = case1.append(1) ## 错误写法
+print(case1)
+
+```
 

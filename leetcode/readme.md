@@ -150,15 +150,44 @@ class Solution:
         return ans
 ```
 
-#### 三数之和
+#### 258. 各位相加
 
 ```
-
+num = 38
+方法一：
+    def addDigits(self, num: int) -> int:
+        while num >= 10:
+            num = sum(int(ch) for ch in str(num))
+        return num
 ```
 
+#### 326. 3的幂 231. 2的幂
 
+```
+方法一：
+位运算
+def isPowerOfTwo(n):
+    # n 必须大于 0，且 n & (n - 1) 结果为 0
+    return n > 0 and (n & (n - 1)) == 0
 
+方法二：
+import math
 
+def isPowerOfTwo(n):
+    if n <= 0:
+        return False
+    # 计算对数并判断是否为整数
+    res = math.log2(n)
+    return res.is_integer()
+    
+方法三：
+def isPowerOfTwo(n):
+    if n <= 0:
+        return False
+    while n % 2 == 0:
+        n //= 2  # 使用刚才学到的整除
+    return n == 1
+```
 
 
 

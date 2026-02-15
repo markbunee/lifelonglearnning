@@ -272,6 +272,28 @@ def health_check():
 curl http://localhost:1234/api/health
 
 {"status": "ok", "local_code": "MODIFIED!"}
+
+docker rm -f 删除容器
+docker rmi -f 删除镜像
+docker volume inspect nginx 挂载卷命令
+sudo -i 进入root用户
+docker run -it(-it进入容器) --rm alpine（停止后删除临时调试容器）
+sudo docker run -d --restart always
+sudo docker run -d --restart unless-stopped
+docker run 创建并运行
+docker create docker start
+docker ps -a 加a看到停止
+docker stop和start会记录信息
+docker logs -f
+容器两大技术本质来源于linux
+Namespaces 的作用是环境隔离
+进程隔离网络隔离用户权限隔离
+controlgroups 资源管理
+负责资源调度和管理
+虚拟机是模拟物理机 容器就是宿主机上的角色扮演
+
+docker exec liux命令
+
 ```
 
 复用容器：

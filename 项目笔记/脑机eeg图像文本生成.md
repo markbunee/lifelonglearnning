@@ -45,7 +45,8 @@ python visualorigin_data.py \
 python code/visualize_dataset.py --subject 4
 
 
-cd /MXX/eegtxtimgaes/Qwen2.5-Omni-main
+微调eeg编码器
+cd MXX/eegtxtimgaes/Qwen2.5-Omni-main
 conda activate eegbrain
 python main.py
 ```
@@ -200,7 +201,7 @@ Conda 环境的本质：
 查看当前优先级： conda config --get channels
 ```
 
-
+## Dreamdiffusion复现和检查：
 
 ```
 python stageA1_eeg_pretrain.py \
@@ -219,31 +220,26 @@ python stageA1_eeg_pretrain.py \
   --include_hcp True \
   --include_kam True
 
-
-python /home/temp_user/MXX/DreamDiffusion-main/code/eeg_ldm.py `
-  --root_path DreamDiffusion-main `
-  --pretrain_gm_path /home/temp_user/MXX/DreamDiffusion-main/pretrains `
-  --pretrain_mbm_path /home/temp_user/MXX/DreamDiffusion-main/results\eeg_pretrain\<你的时间戳>\checkpoints\checkpoint.pth `
-  --eeg_signals_path /home/temp_user/MXX/DreamDiffusion-main/datasets\eeg_5_95_std.pth `
-  --splits_path /home/temp_user/MXX/DreamDiffusion-main/datasets\block_splits_by_image_single.pth `
-  --batch_size 25 `
-  --lr 5.3e-5 `
-  --num_epoch 50 `
-  --ddim_steps 250 `
-  --subject 4
   
-  
+ # dreamdiffusion stageb
  python /home/temp_user/MXX/DreamDiffusion-main/code/eeg_ldm.py \
   --root_path /home/temp_user/MXX/DreamDiffusion-main \
   --pretrain_gm_path /home/temp_user/MXX/DreamDiffusion-main/pretrains \
   --pretrain_mbm_path "/home/temp_user/MXX/DreamDiffusion-main/checkpoint.pth" \
   --batch_size 4 \
   --lr 5.3e-5 \
+  --precision 16 \
+  --accumulate_grad 8 \
   --num_epoch 50 \
   --ddim_steps 250
   
   
+ # 推理
+ nohup python3 code/gen_eval_eeg.py --dataset EEG --model_path  "/home/temp_user/MXX/DreamDiffusion-main/checkpoint.pth" --splits_path "datasets/block_splits_by_image_single.pth" --eeg_signals_path "datasets/eeg_5_95_std.pth" --config_patch "pretrains/models/config15.yaml" --imagenet_path "datasets/imageNet_images" > eval.log 2>&1 &
+
+
+  
 ```
 
-
+## Newmodel
 
