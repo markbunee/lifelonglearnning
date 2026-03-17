@@ -32,11 +32,7 @@ wsl --distribution == wsl -d <发行版名称>
 
 wsl --unregister <发行版名称>
 
-当出现问题：
 
-C:\Users\ASUS>wsl 无法将磁盘“C:\Users\ASUS\AppData\Local\Docker\wsl\main\ext4.vhdx”附加到 WSL2： 系统找不到指定的文件。 错误代码: Wsl/Service/CreateInstance/MountVhd/HCS/ERROR_FILE_NOT_FOUND
-
-wsl --set-default Ubuntu-22.04
 
 
 

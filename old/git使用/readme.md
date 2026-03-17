@@ -96,11 +96,17 @@ git commit -m 'the initial edition'
 
 git config --global user.name "markbunee"
 
-git remote add origin https://github.com/markbunee/lifelonglearnning.git
+git remote add origin https://github.com/markbunee/beyondrange.git
 
  git remote add origin http://192.168.5.221:8081/shuzhuan_git/zhishiku/rapid_platform/kd_algo.git
 
  git remote add origin https://github.com/markbunee/VitaFlow.git
+
+
+
+git config --global user.name "maxuanxuan"
+
+
 
 其他知识点：
 
@@ -149,3 +155,14 @@ git branch -r
 检查远程分支与本地分支对应情况
 
 git branch -vv
+
+
+
+rm -rf .git
+git init
+git remote add origin https://github.com/markbunee/zhisuan.git
+
+
+
+
+

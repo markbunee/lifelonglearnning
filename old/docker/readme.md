@@ -6,15 +6,15 @@
 
 ## 2.笔记
 
-![image-20250702160224236](./pic/image-20250702160224236.png)
 
-![image-20250702160259835](./pic/image-20250702160259835.png)
 
-![image-20250702160329463](./pic/image-20250702160329463.png)
 
-![image-20250702160419735](./pic/image-20250702160419735.png)
 
-![image-20250702160533875](./pic/image-20250702160533875.png)
+
+
+
+
+
 
 docker pull nginx
 
@@ -92,7 +92,7 @@ docker pull
 
 docker network create network1
 
-![image-20251014144008572](./pic/image-20251014144008572.png)
+
 
 podman pull docker.io/library/mongo 
 
@@ -104,7 +104,7 @@ sudo vi /etc/containers/registries.conf更改配置文件
 
 ip dder pod
 
-![image-20251014144639432](./pic/image-20251014144639432.png)
+
 
 与k8s无缝衔接并且借助配置文件替代原来dockers的compose
 
