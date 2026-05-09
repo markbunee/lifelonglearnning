@@ -103,7 +103,7 @@ sudo docker logs -f kingmed-gradio
 sudo docker run -d -p 9313:7860   -e PYTHONUNBUFFERED=1   -e GRADIO_ANALYTICS_ENABLED=false   -v "$(pwd):/app"   --name kingmed-gradio kingmed-gradio:latest
 
 
- sudo docker run -it --name ana_mxx_container -v /data/data_home/kmcv/czy/ana_training/mt_mxx/multcdi_label:/prj -v /Pathology_Al_Data_test/KMCV/ANA_data/0-kangrun/0-原始图片库:/home/kmcv --shm-size 256G --gpus 'device=1' yolo_images /bin/bash
+
 
 ```
 
@@ -112,5 +112,115 @@ sudo docker run -d -p 9313:7860   -e PYTHONUNBUFFERED=1   -e GRADIO_ANALYTICS_EN
 ANA
 
 ```
+ sudo docker run -it --name ana_mxx512_container -v /data/data_home/kmcv/czy/ana_training/mt_mxx/multi_label:/prj -v /Pathology_Al_Data_test/KMCV/ANA_data/0-kangrun/0-原始图片库:/home/kmcv --shm-size 512G --gpus all yolo_images /bin/bash
+ 
  .\.venv\Scripts\activate
+sudo docker exec -it ana_mxx_container /bin/bash
+ 
+nohup python train_best_acc.py --csv_path ./raw_csv/阳性数据训练测试集划分_v2_260323_bs2-bs7_with_multi_hot_train_val.csv > log_0323_new_$(date +%Y%m%d_%H%M%S).log 2>&1 &
+
+vit
+python d:\ASUS\kingmednan\multi_label\train_best_acc.py ^
+  --csv_path d:\ASUS\kingmednan\raw_csv\你的数据.csv ^ 
+  --model vit_b16 ^
+  --epochs 50 ^
+  --batch_size 64 ^
+  --lr 0.0003
+  
+nohup python train_dulmodel.py --csv_path ./raw_csv/阳性数据训练测试集划分_with_multi_hot_train_val.csv > log_rs50_$(date +%Y%m%d_%H%M%S).log 2>&1 &
+
+nohup python train_best_acc.py --csv_path ./raw_csv/阳性数据训练测试集划分_with_multi_hot_train_val.csv > log_img512rs50_$(date +%Y%m%d_%H%M%S).log 2>&1 &
 ```
+
+```
+python huafen.py \
+  --dataset_dir /Pathology_Al_Data_test/KMCV/ANA_data/0-kangrun/0-dsDNA_图片库/0-POC/dsDNA/dsDNA \
+  --output_dir /data/data_home/kmcv/czy/ana_training/mt_mxx/multi_label/cls/datasets_split \
+  --neg_name 阴性 \
+  --pos_name 阳性 \
+  --train_ratio 0.8 \
+  --val_ratio 0.2
+
+# 阳是0，阴是1 0323改回来0是阴1是阳
+# 0 c-ANCA 1 p-ANCA
+python D:\MXX\kingmednan\cls\huafen.py --dataset_dir D:\MXX\kingmednan\cls\datasetabca\cls_p_n --output_dir D:\MXX\kingmednan\cls\datasetabca\dataset_p_n --neg_name 0 --pos_name 1 --train_ratio 0.7 --val_ratio 0.3
+
+
+python resnet_train.py 
+
+```
+
+```
+python huafen.py --dataset_dir /data/data_home/kmcv/czy/ana_training/mt_mxx/multi_label/cls/cls_c_p --output_dir /data/data_home/kmcv/czy/ana_training/mt_mxx/multi_label/cls/dataset_c_p --neg_name 1 --pos_name 0 --train_ratio 0.7 --val_ratio 0.3
+
+
+
+导包 wsl
+pip download \
+  scikit-learn==1.3.2 \
+  numpy==1.26.4 \
+  scipy==1.11.4 \
+  joblib==1.3.2 \
+  threadpoolctl==3.2.0 \
+  -d sklearn_pkg \
+  --only-binary=:all: \
+  --platform manylinux2014_x86_64 \
+  --python-version 310 \
+  --implementation cp \
+  -i https://mirrors.aliyun.com/pypi/simple/ \
+  --trusted-host mirrors.aliyun.com
+
+
+
+pip install --no-index --find-links=sklearn_pkg scikit-learn
+
+
+
+
+pip download \
+  imagecodecs \
+  -d imagecodecs_pkg \
+  --only-binary=:all: \
+  --platform manylinux2014_x86_64 \
+  --python-version 310 \
+  --implementation cp \
+  -i https://mirrors.aliyun.com/pypi/simple/ \
+  --trusted-host mirrors.aliyun.com
+  
+pip install --no-index --find-links=imagecodecs_pkg imagecodecs
+
+
+
+pip download \
+  segmentation-models-pytorch==0.3.3 \
+  timm==0.9.2 \
+  -d smp_pkg \
+  --no-deps \
+  --only-binary=:all: \
+  --platform manylinux2014_x86_64 \
+  --python-version 310 \
+  --implementation cp \
+  --abi cp310 \
+  -i https://pypi.tuna.tsinghua.edu.cn/simple/
+
+
+pip download \
+  efficientnet-pytorch==0.7.1 \
+  pretrainedmodels==0.7.4 \
+  safetensors \
+  pyyaml \
+  munch \
+  -d smp_pkg \
+  -i https://pypi.tuna.tsinghua.edu.cn/simple/
+  
+  
+  pip install --no-index --find-links=smp_pkg segmentation-models-pytorch
+```
+
+
+
+cpython、协程进程线程效率优化、Python后端、OpenVINO模型推理框架、docker部署运维、LangChain、RAG、向量数据库、多Agent、Skills、大模型微调流程， SFT
+
+
+
+机器学习、深度学习、TensorFlow和PyTorch框架、NLP、SD、VAE、COX生存分析、生境分析、因果推断、数据分析、数据挖掘

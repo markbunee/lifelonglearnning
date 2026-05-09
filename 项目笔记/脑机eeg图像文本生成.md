@@ -241,5 +241,3 @@ python stageA1_eeg_pretrain.py \
   
 ```
 
-## Newmodel
-

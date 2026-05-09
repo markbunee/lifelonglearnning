@@ -977,7 +977,75 @@ FID去衡量图片生成效果 clipscore
 
 
 
+```mermaid
+flowchart LR
+  subgraph EEG_Encoder["EEG‑MoRAE 编码器"]
+    X[EEG x: B×C×T]
+    AD[Conv1d Adapter: C→128]:::enc
+    BB[MAEforEEG Encoder → latent B×N×1024]:::enc
+    FEAT[mean tokens (¬CLS) → B×1024]:::enc
 
+    VH[Visual Head 1024→512]:::head
+    SH[Semantic Head 1024→512]:::head
+    FH[Fusion Head 1024→512]:::head
+
+    RP[AdaptiveAvgPool1d → B×C]:::router
+    RT[Router MLP → gates (g_vis_img,g_fus_img; g_sem_txt,g_fus_txt)]:::router
+
+    IMG[(g_vis*emb_vis + g_fus*emb_fus)]:::mix
+    TXT[(g_sem*emb_sem + g_fus_txt*emb_fus)]:::mix
+    NIMG[L2 normalize → EEG→Image Emb B×512]:::out
+    NTXT[L2 normalize → EEG→Text Emb B×512]:::out
+  end
+
+  subgraph CLIP_Loss["CLIP/InfoNCE 对齐"]
+    IIMG[Image Emb (B×512) 归一化]:::tgt
+    ITXT[Text Emb (B×512) 归一化]:::tgt
+    LS[logit_scale = exp(θ)]:::temp
+
+    Simg[(EIMG·IIMG^T)]:::sim
+    Stxt[(ETXT·ITXT^T)]:::sim
+    Limg[[L_img = S_img × logit_scale]]:::sim
+    Ltxt[[L_txt = S_txt × logit_scale]]:::sim
+
+    CEi1[CE(L_img, diag)]:::loss
+    CEi2[CE(L_img^T, diag)]:::loss
+    CEt1[CE(L_txt, diag)]:::loss
+    CEt2[CE(L_txt^T, diag)]:::loss
+    LIMG_SUM[Loss_img = (CEi1+CEi2)/2]:::loss
+    LTXT_SUM[Loss_txt = (CEt1+CEt2)/2]:::loss
+    TOTAL[[Total = α·Loss_img + (1−α)·Loss_txt]]:::sum
+  end
+
+  classDef enc fill:#e8f5e9,stroke:#2e7d32,color:#2e7d32
+  classDef head fill:#e3f2fd,stroke:#1565c0,color:#1565c0
+  classDef router fill:#fff3e0,stroke:#ef6c00,color:#ef6c00
+  classDef mix fill:#fce4ec,stroke:#ad1457,color:#ad1457
+  classDef out fill:#ede7f6,stroke:#4527a0,color:#4527a0
+  classDef tgt fill:#bbdefb,stroke:#1565c0
+  classDef temp fill:#ffe0b2,stroke:#ef6c00
+  classDef sim fill:#fffde7,stroke:#f9a825
+  classDef loss fill:#f3e5f5,stroke:#6a1b9a
+  classDef sum fill:#ede7f6,stroke:#4527a0
+
+  X -->|if C≠128| AD --> BB --> FEAT
+  X -->|else| BB --> FEAT
+  FEAT --> VH --> EV[emb_vis]
+  FEAT --> SH --> ES[emb_sem]
+  FEAT --> FH --> EF[emb_fus]
+  X --> RP --> RT
+  RT -->|normalize branches| IMG
+  RT -->|normalize branches| TXT
+  EV --> IMG; EF --> IMG
+  ES --> TXT; EF --> TXT
+  IMG --> NIMG; TXT --> NTXT
+
+  NIMG --> Simg; IIMG --> Simg; LS --> Limg; Simg --> Limg
+  NTXT --> Stxt; ITXT --> Stxt; LS --> Ltxt; Stxt --> Ltxt
+  Limg --> CEi1; Limg --> CEi2; CEi1 --> LIMG_SUM; CEi2 --> LIMG_SUM
+  Ltxt --> CEt1; Ltxt --> CEt2; CEt1 --> LTXT_SUM; CEt2 --> LTXT_SUM
+  LIMG_SUM --> TOTAL; LTXT_SUM --> TOTAL
+```
 
 
 

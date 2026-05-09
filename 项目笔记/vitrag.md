@@ -63,3 +63,7 @@ python main.py --input "D:\ASUS\biocls\mineru_test\IJN-510417-garlic-derived-exo
 python main.py --input "D:/papers/paper.pdf" --output "D:/output" --method biomedclip --manual_crop '{"x1":100,"y1":200,"x2":500,"y2":600}'
 ```
 
+```
+yolo train task=detect data=""/home/gdut-627/4T_hard_disk/mxxxxx/yolov8_data.yaml"" model=""/home/gdut-627/4T_hard_disk/gyj/WaterAffairs/yolov8/ultralytics-8.3.135/yolov8n.pt"" epochs=100 imgsz=640 batch=8 workers=0 device=0 amp=false
+```
+
